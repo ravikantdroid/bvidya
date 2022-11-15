@@ -1,0 +1,26 @@
+                Executable : /Users/ravisrishta/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake
+arguments : 
+-H/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data
+-DCMAKE_CXX_FLAGS=-std=c++11
+-DCMAKE_FIND_ROOT_PATH=/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/debug/prefab/x86/prefab
+-DCMAKE_BUILD_TYPE=Debug
+-DCMAKE_TOOLCHAIN_FILE=/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888/build/cmake/android.toolchain.cmake
+-DANDROID_ABI=x86
+-DANDROID_NDK=/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888
+-DCMAKE_ANDROID_ARCH_ABI=x86
+-DCMAKE_ANDROID_NDK=/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/build/lib-raw-data/intermediates/cmake/debug/obj/x86
+-DCMAKE_MAKE_PROGRAM=/Users/ravisrishta/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_SYSTEM_VERSION=19
+-DANDROID_STL=c++_static
+-DANDROID_PLATFORM=android-15
+-DANDROID_TOOLCHAIN=clang
+-DANDROID_STL_FORCE_FEATURES=OFF
+-DANDROID_ARM_NEON=TRUE
+-B/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/debug/x86
+-GNinja
+jvmArgs : 
+
+Build command args:

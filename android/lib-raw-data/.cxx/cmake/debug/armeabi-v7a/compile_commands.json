@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi19 --sysroot=/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dapm_plugin_raw_data_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -fno-limit-debug-info  -fPIC   -o CMakeFiles/apm-plugin-raw-data.dir/src/main/cpp/io_agora_advancedvideo_rawdata_MediaPreProcessing.cpp.o -c /Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/src/main/cpp/io_agora_advancedvideo_rawdata_MediaPreProcessing.cpp",
+  "file": "/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/src/main/cpp/io_agora_advancedvideo_rawdata_MediaPreProcessing.cpp"
+}
+]

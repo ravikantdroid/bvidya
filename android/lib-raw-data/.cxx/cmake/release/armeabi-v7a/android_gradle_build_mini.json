@@ -1,0 +1,22 @@
+{
+  "buildFiles": [
+    "/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/CMakeLists.txt",
+    "/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888/build/cmake/android.toolchain.cmake",
+    "/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888/build/cmake/android-legacy.toolchain.cmake",
+    "/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888/build/cmake/platforms.cmake",
+    "/Users/ravisrishta/Library/Android/sdk/ndk/24.0.8215888/build/cmake/compiler_id.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/ravisrishta/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/release/armeabi-v7a\" clean"
+  ],
+  "buildTargetsCommand": "/Users/ravisrishta/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja  -C \"/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/release/armeabi-v7a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "apm-plugin-raw-data-Release-armeabi-v7a": {
+      "artifactName": "apm-plugin-raw-data",
+      "buildCommand": "/Users/ravisrishta/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/release/armeabi-v7a\" apm-plugin-raw-data",
+      "abi": "armeabi-v7a",
+      "output": "/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/build/lib-raw-data/intermediates/cmake/release/obj/armeabi-v7a/libapm-plugin-raw-data.so",
+      "runtimeFiles": []
+    }
+  }
+}

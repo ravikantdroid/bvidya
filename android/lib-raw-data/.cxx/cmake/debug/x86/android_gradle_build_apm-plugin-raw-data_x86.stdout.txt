@@ -1,0 +1,2 @@
+ninja: Entering directory `/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/debug/x86'
+ninja: no work to do.

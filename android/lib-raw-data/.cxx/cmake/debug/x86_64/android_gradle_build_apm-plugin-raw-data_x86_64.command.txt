@@ -1,0 +1,7 @@
+Executable : /Users/ravisrishta/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+arguments : 
+-C
+/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/debug/x86_64
+apm-plugin-raw-data
+jvmArgs : 
+

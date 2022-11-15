@@ -1,0 +1,2 @@
+ninja: Entering directory `/Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/android/lib-raw-data/.cxx/cmake/release/x86'
+[1/1] Linking CXX shared library /Users/ravisrishta/Documents/Srishta/Development/Flutter/Work/Client/BharatArpanet/evidya/build/lib-raw-data/intermediates/cmake/release/obj/x86/libapm-plugin-raw-data.so
