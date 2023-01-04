@@ -527,9 +527,7 @@ class ApiRepository {
 
   Future<LiveClassModal> liveClassesData(String token) async {
     _dio.options.headers['X-Auth-Token'] = '${token}';
-    var response = await _dio.get(
-      StringConstant.BASE_URL + 'live-classes',
-    );
+    var response = await _dio.get(StringConstant.BASE_URL + 'live-classes');
     if (response.statusCode == 200) {
       return LiveClassModal.fromJson(response.data);
     } else {
@@ -541,9 +539,8 @@ class ApiRepository {
   Future<dynamic> deleteMeeting(String token, String meetingId) async {
     _dio.options.headers['X-Auth-Token'] = '${token}';
     debugPrint('Token $token MeetingId $meetingId');
-    var response = await _dio.get(
-      StringConstant.BASE_URL + 'meeting/delete/${meetingId}',
-    );
+    var response =
+        await _dio.get(StringConstant.BASE_URL + 'meeting/delete/${meetingId}');
     if (response.statusCode == 200) {
       return response.data;
     } else {
@@ -578,9 +575,7 @@ class ApiRepository {
 
   Future<RtmtokenModal> addfriend(var id, String token) async {
     _dio.options.headers['X-Auth-Token'] = '${token}';
-    dynamic data = {
-      'connection_id': id,
-    };
+    final data = {'connection_id': id};
     var response =
         await _dio.post(StringConstant.BASE_URL + 'connection/add', data: data);
     if (response.statusCode == 200) {

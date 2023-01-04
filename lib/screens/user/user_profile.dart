@@ -1965,7 +1965,7 @@ class _UserProfileState extends State<UserProfile> {
 
   logoutAlertBox(BuildContext buildContext) {
     return showDialog(
-        context: context,
+        context: buildContext,
         builder: (BuildContext context) {
           return Dialog(
             shape: RoundedRectangleBorder(
@@ -2019,7 +2019,6 @@ class _UserProfileState extends State<UserProfile> {
                       FlatButton(
                           minWidth: 100,
                           onPressed: () async {
-                            Navigator.of(context).pop();
                             EasyLoading.show();
                             final db = DatabaseHelper.instance;
                             try {
@@ -2032,13 +2031,17 @@ class _UserProfileState extends State<UserProfile> {
                               await pref.clear();
                             } catch (_) {}
                             EasyLoading.dismiss();
+                            Navigator.of(context).pop();
                             Navigator.pushAndRemoveUntil(
-                              context,
+                              buildContext,
                               MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     LoginScreen(),
                               ),
-                              (route) => false,
+                              (route) {
+                                // print('name ${route.}');
+                                return false;
+                              },
                             );
                           },
                           child: Center(

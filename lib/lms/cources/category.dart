@@ -108,7 +108,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   boxShadow: [
                                     BoxShadow(
                                         blurRadius: 10,
-                                        offset: Offset(-1, 1),
+                                        offset: const Offset(-2, 2),
                                         color: Colors.grey.shade400),
                                   ],
                                   color: Colors.white),

@@ -87,6 +87,7 @@ class _GroupChatScreenState extends State<GroupChatScreen>
 
   bool _sendingMessage = false;
   bool _hasRebuildCalled = false;
+  AgoraRtmClient _client;
 
   @override
   void initState() {
@@ -101,6 +102,12 @@ class _GroupChatScreenState extends State<GroupChatScreen>
     recieptPerson = widget.recentchatuserdetails.groupName;
     final code = widget.rtmpeerid.hashCode;
     LocalNotificationService.clearPool(code);
+    if (widget.client != null) {
+      _client = widget.client;
+    } else {
+      _createClient();
+    }
+
     // _query();
   }
 
@@ -111,14 +118,13 @@ class _GroupChatScreenState extends State<GroupChatScreen>
     groupChatLogController.removeLog(index);
   }
 
-  AgoraRtmClient _client;
   Future<AgoraRtmClient> _createClient() async {
-    if (_client != null) {
-      return _client;
-    }
-    if (widget.client != null) {
-      return widget.client;
-    }
+    // if (_client != null) {
+    //   return _client;
+    // }
+    // if (widget.client != null) {
+    //   return widget.client;
+    // }
 
     try {
       _client = await AgoraRtmClient.createInstance(
@@ -149,19 +155,19 @@ class _GroupChatScreenState extends State<GroupChatScreen>
     for (var row in allRows) {
       if (row != null) {
         ChatModel model = ChatModel(
-            id: row['id'] == null ? '' : row['id'].toString(),
-            message: row['message'],
-            from: row['from_id'],
-            to: row['to_id'],
-            group: row['groupname'],
-            // deliveryStatus: row['deliveryStatus'],
-            diraction: row['diraction'],
-            reply: row['reply'],
-            replyText: row['reply_text'],
-            textId: row['textid'],
-            timestamp: row['timestamp'],
-            url: row['url'] ?? '',
-            type: row['type']);
+          id: row['id'] == null ? '' : row['id'].toString(),
+          message: row['message'],
+          from: row['from_id'],
+          to: row['to_id'],
+          group: row['groupname'],
+          diraction: row['diraction'],
+          reply: row['reply'],
+          replyText: row['reply_text'],
+          textId: row['textid'],
+          timestamp: row['timestamp'],
+          url: row['url'] ?? '',
+          type: row['type'],
+        );
         groupChatLogController.addLog(model);
       }
     }
@@ -1567,17 +1573,18 @@ class _GroupChatScreenState extends State<GroupChatScreen>
     final textid = DateTime.now().millisecondsSinceEpoch.toString();
 
     ChatModel model = ChatModel(
-        // deliveryStatus: 'new',
-        diraction: 'send',
-        from: userpeerid,
-        textId: textid,
-        group: widget.recentchatuserdetails.groupName,
-        message: files.name,
-        url: file.path,
-        reply: replytex.isNotEmpty ? 'reply' : 'noreplay',
-        timestamp: DateTime.now().toString(),
-        to: '',
-        type: 'video');
+      // deliveryStatus: 'new',
+      diraction: 'send',
+      from: userpeerid,
+      textId: textid,
+      group: widget.recentchatuserdetails.groupName,
+      message: files.name,
+      url: file.path,
+      reply: replytex.isNotEmpty ? 'reply' : 'noreplay',
+      timestamp: DateTime.now().toString(),
+      to: '',
+      type: 'video',
+    );
 
     videoAPI(file, model);
   }
@@ -1616,8 +1623,7 @@ class _GroupChatScreenState extends State<GroupChatScreen>
 
       for (var row in widget.membersList) {
         if (userpeerid != row.pid) {
-          await (await _createClient())
-              .sendMessageToPeer(row.pid, message, true, false);
+          await _client.sendMessageToPeer(row.pid, message, true, false);
           await _sendFCMPushChat(model, row.fcmToken, '');
           // fcmapicall(
           //     model, row.fcmToken, '', "group", 'basic_channel', textid, row.pid
@@ -1657,7 +1663,7 @@ class _GroupChatScreenState extends State<GroupChatScreen>
       DatabaseHelper.replyText: model.replyText,
       DatabaseHelper.reply: model.reply,
       DatabaseHelper.type: model.type,
-      DatabaseHelper.from: widget.rtmpeerid,
+      DatabaseHelper.from: userpeerid,
       DatabaseHelper.to: '',
       DatabaseHelper.groupname: model.group,
       DatabaseHelper.textId: model.textId
@@ -1689,7 +1695,7 @@ class _GroupChatScreenState extends State<GroupChatScreen>
                               jsonEncode(model.toJson()));
                           for (var row in widget.membersList) {
                             if (userpeerid != row.pid) {
-                              await (await _createClient()).sendMessageToPeer(
+                              await _client.sendMessageToPeer(
                                   row.pid, message, true, false);
                               await _sendFCMPushChat(
                                   model, row.fcmToken, value.body.source);
@@ -1774,7 +1780,7 @@ class _GroupChatScreenState extends State<GroupChatScreen>
                           for (var row
                               in widget.recentchatuserdetails.members) {
                             if (userpeerid != row.pid) {
-                              await (await _createClient()).sendMessageToPeer(
+                              await _client.sendMessageToPeer(
                                   row.pid, message, true, false);
                               await _sendFCMPushChat(model, row.fcmToken, '');
                               // fcmapicall(
@@ -1959,8 +1965,8 @@ class _GroupChatScreenState extends State<GroupChatScreen>
       debugPrint("WIddget ${widget.membersList}");
       // setState(() {
       for (int i = 0; i < widget.membersList.length; i++) {
-        var name = widget.membersList[i].pid;
-        if (name == _loginData.id.toString()) {
+        var id = widget.membersList[i].pid;
+        if (id == _loginData.id.toString()) {
           groupMembers.add("You");
         } else {
           groupMembers.add(widget.membersList[i].name);

@@ -120,7 +120,7 @@ class _SubCategoryState extends State<SubCategory> {
                                         alignment: Alignment.center,
                                         child: Center(
                                             child: ClipRRect(
-                                          borderRadius: BorderRadius.only(
+                                          borderRadius: const BorderRadius.only(
                                               topRight: Radius.circular(15),
                                               topLeft: Radius.circular(15)),
                                           child: CachedNetworkImage(
@@ -129,7 +129,7 @@ class _SubCategoryState extends State<SubCategory> {
                                             imageUrl: StringConstant.IMAGE_URL +
                                                 catList[index].image,
                                             placeholder: (context, url) =>
-                                                SizedBox(
+                                                const SizedBox(
                                               height: 20,
                                               width: 20,
                                               child: CircularProgressIndicator(
@@ -142,7 +142,7 @@ class _SubCategoryState extends State<SubCategory> {
                                                     "assets/images/bvidhya.png"),
                                           ),
                                         )),
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                             color: Colors.white,
                                             borderRadius: BorderRadius.only(
                                                 topRight: Radius.circular(15),
@@ -150,7 +150,7 @@ class _SubCategoryState extends State<SubCategory> {
                                       ),
                                       Container(
                                         height: 8.h,
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             right: 10, left: 10),
                                         alignment: Alignment.center,
                                         child: Text(
@@ -163,7 +163,7 @@ class _SubCategoryState extends State<SubCategory> {
                                               color: AppColors
                                                   .appNewLightThemeColor),
                                         ),
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                             color: Colors.black12,
                                             borderRadius: BorderRadius.only(
                                                 bottomLeft: Radius.circular(15),

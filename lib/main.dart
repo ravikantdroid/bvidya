@@ -53,6 +53,9 @@ final MessageLog messageLog = MessageLog();
 final GroupMessageLog groupMessageLog = GroupMessageLog();
 
 showOnLock(bool show) async {
+  if (!Platform.isAndroid) {
+    return;
+  }
   const String methodChannel = 'Lockscreen flag';
   const platform = MethodChannel(methodChannel);
   await platform.invokeMethod('startNewActivity', {
@@ -62,6 +65,7 @@ showOnLock(bool show) async {
 
 Future<ChatModel> _handleChatModelMessege(String text) async {
   ChatModel model;
+
   if (text.startsWith('{')) {
     try {
       model = ChatModel.fromJson(jsonDecode(text));
@@ -70,7 +74,7 @@ Future<ChatModel> _handleChatModelMessege(String text) async {
         // if (model.type == 'image') {
         // model.type = 'image';
         // }
-        int id = await _insertGroupToDb(model.to, model);
+        int id = await _insertGroupToDb(model);
         if (id > 0) {
           SharedPreferencesAndroid.registerWith();
           final prefs = await SharedPreferences.getInstance();
@@ -127,7 +131,7 @@ void _callcutSpref() async {
   await prefs.setInt('video_call', callEnd);
 }
 
-_insertGroupToDb(String peerid, ChatModel model) async {
+_insertGroupToDb(ChatModel model) async {
   // row to insert
   Map<String, dynamic> row = {
     DatabaseHelper.Id: null,
@@ -138,7 +142,7 @@ _insertGroupToDb(String peerid, ChatModel model) async {
     DatabaseHelper.reply: model.reply,
     DatabaseHelper.from: model.from,
     DatabaseHelper.replyText: model.replyText,
-    DatabaseHelper.to: peerid ?? '',
+    DatabaseHelper.to: '',
     DatabaseHelper.groupname: model.group,
     DatabaseHelper.textId: model.textId,
     DatabaseHelper.url: model.url ?? ''
@@ -229,7 +233,13 @@ Future<void> _backgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
   }
-
+  try {
+    SharedPreferencesAndroid.registerWith();
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.getBool("isLogin")) {
+      return;
+    }
+  } catch (_) {}
   final type = message.data['type'];
   if (type == 'basic_channel') {
     // LocalNotificationService.showNotification(message);
@@ -265,6 +275,7 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
+
   if (Platform.isAndroid) {
     await Firebase.initializeApp();
   } else {
@@ -394,25 +405,21 @@ class BVidyaAppState extends State<BVidyaApp> with WidgetsBindingObserver {
     // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
     checkAndNavigationCallingPage();
     firebase();
+    readToken();
     _newLocaleDelegate = const AppTranslationsDelegate(newLocale: null);
     application.onLocaleChanged = onLocaleChange;
-    AwesomeNotifications().actionStream.listen((receivedAction) {
+    AwesomeNotifications().actionStream.listen((receivedAction) async {
+      SharedPreferencesAndroid.registerWith();
+      final prefs = await SharedPreferences.getInstance();
+      if (!prefs.getBool("isLogin")) {
+        return;
+      }
       if (receivedAction.channelKey == 'basic_channel') {
         if (receivedAction.payload['from']?.isNotEmpty == true) {
           final code = receivedAction.payload['from'].hashCode;
           LocalNotificationService.clearPool(code);
         }
         if (receivedAction.payload['group'] == 'true') {
-          // await Navigator.of(context).pushReplacement(MaterialPageRoute(
-          //     builder: (context) => MessengerTab(
-          //           rtmpeerid: receivedAction.payload['name'],
-          //         )));
-          // if (!mounted) {
-          //   print('Error in opening group chat');
-          //   return;
-          // }
-          // Future.delayed(Duration.zero).then(
-          // (value) =>
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => LandingScreen(
@@ -424,16 +431,6 @@ class BVidyaAppState extends State<BVidyaApp> with WidgetsBindingObserver {
             // ),
           );
         } else {
-          // await Navigator.of(context).pushReplacement(MaterialPageRoute(
-          //     builder: (context) => MessengerTab(
-          //           rtmpeerid: receivedAction.payload['peerid'],
-          //         )));
-          // if (!mounted) {
-          //   print('Error in opening group chat');
-          //   return;
-          // }
-          // Future.delayed(Duration.zero).then(
-          // (value) =>
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => LandingScreen(
@@ -488,7 +485,6 @@ class BVidyaAppState extends State<BVidyaApp> with WidgetsBindingObserver {
           }
           break;
         case CallEvent.ACTION_CALL_DECLINE:
-          // showOnLock(false);
           callinsert(
             event.body['extra']['username'],
             event.body['extra']['calltype'],
@@ -506,6 +502,12 @@ class BVidyaAppState extends State<BVidyaApp> with WidgetsBindingObserver {
           break;
       }
     });
+  }
+
+  void readToken() async {
+    final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+    final token = await _fcm.getToken();
+    debugPrint("Token Value $token");
   }
 
   getCurrentCall() async {
@@ -578,6 +580,11 @@ class BVidyaAppState extends State<BVidyaApp> with WidgetsBindingObserver {
       (message) async {
         debugPrint('FirebaseMessaging.instance.getInitialMessage');
         if (message == null) return;
+        SharedPreferencesAndroid.registerWith();
+        final prefs = await SharedPreferences.getInstance();
+        if (!prefs.getBool("isLogin")) {
+          return;
+        }
         if (message.data['type'] == 'basic_channel') {
           // downloadFromFirebase(message);
           debugPrint('data:${message.data}');
@@ -608,12 +615,17 @@ class BVidyaAppState extends State<BVidyaApp> with WidgetsBindingObserver {
         //SharedPreferences prefs = await SharedPreferences.getInstance();
         // var chatUserName = prefs.getString('chatUserName') ?? '';
         // debugPrint('Chat User Name $chatUserName');
+        SharedPreferencesAndroid.registerWith();
+        final prefs = await SharedPreferences.getInstance();
+        if (!prefs.getBool("isLogin")) {
+          return;
+        }
         debugPrint('listen a forground message ${message.data}');
         SharedPreferencesAndroid.registerWith();
         var type = message.data['type'];
         if (type == 'basic_channel') {
           // downloadFromFirebase(message);
-          final prefs = await SharedPreferences.getInstance();
+          // final prefs = await SharedPreferences.getInstance();
           final String action = prefs.getString('action');
           debugPrint('screenname :$action -- ${message.data['from_id']}');
           insertLocaldataFromFirebase(
@@ -623,7 +635,7 @@ class BVidyaAppState extends State<BVidyaApp> with WidgetsBindingObserver {
           );
         } else if (type == 'call_channel') {
           Vibrate.vibrate();
-          final prefs = await SharedPreferences.getInstance();
+          // final prefs = await SharedPreferences.getInstance();
           await prefs.setInt('audio_call', callFree);
           await prefs.setInt('video_call', callFree);
           LocalNotificationService.callkitNotification(message);

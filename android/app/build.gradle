@@ -39,8 +39,8 @@ android {
         applicationId "com.bvidya"
         minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 17
-        versionName '1.1.17'
+        versionCode 18
+        versionName '1.1.18'
         multiDexEnabled true
     }
       signingConfigs {

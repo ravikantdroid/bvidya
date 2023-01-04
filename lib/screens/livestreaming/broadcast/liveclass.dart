@@ -189,7 +189,7 @@ class _liveClassState extends State<LiveClass> with WidgetsBindingObserver {
                   Container(
                       alignment: Alignment.bottomRight,
                       child: IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.fullscreen_exit,
                             color: Colors.white,
                           ),

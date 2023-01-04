@@ -1,12 +1,12 @@
-import 'dart:async';
+// import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
+// import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evidya/lms/all_mentor_list.dart';
 import 'package:evidya/lms/banner_details.dart';
-import 'package:evidya/lms/cources/my_learning.dart';
+// import 'package:evidya/lms/cources/my_learning.dart';
 import 'package:evidya/lms/cources/sub_category.dart';
 import 'package:evidya/lms/lession.dart';
 import 'package:evidya/lms/lms_live_class.page.dart';
@@ -14,35 +14,35 @@ import 'package:evidya/lms/lms_search_page.dart';
 import 'package:evidya/lms/mentor_detail_page.dart';
 import 'package:evidya/lms/video/bloc/HomeState.dart';
 import 'package:evidya/lms/video/bloc/homeBloc.dart';
-import 'package:evidya/lms/video/bloc/homeEvent.dart';
-import 'package:evidya/lms/video/mentorvideolist.dart';
+// import 'package:evidya/lms/video/bloc/homeEvent.dart';
+// import 'package:evidya/lms/video/mentorvideolist.dart';
 import 'package:evidya/lms/video/videolist_screen.dart';
-import 'package:evidya/lms/videodetail_screen.dart';
+// import 'package:evidya/lms/videodetail_screen.dart';
 import 'package:evidya/model/login/PrefranceData.dart';
 import 'package:evidya/resources/app_colors.dart';
 import 'package:evidya/screens/user/teacher_courses_list_page.dart';
-import 'package:evidya/screens/user/teacherdetail_screen.dart';
+// import 'package:evidya/screens/user/teacherdetail_screen.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
-import 'package:simple_tags/simple_tags.dart';
+// import 'package:simple_tags/simple_tags.dart';
 // import 'package:cached_networkimage/cached_networkimage.dart';
-import 'package:evidya/constants/page_route_constants.dart';
+// import 'package:evidya/constants/page_route_constants.dart';
 import 'package:evidya/constants/string_constant.dart';
-import 'package:evidya/model/home.dart';
+// import 'package:evidya/model/home.dart';
 import 'package:evidya/model/login_res.dart';
 import 'package:evidya/model/profile.dart';
 import 'package:evidya/network/repository/api_repository.dart';
 
-import 'package:evidya/screens/welcome_screen/welcome_screen.dart';
+// import 'package:evidya/screens/welcome_screen/welcome_screen.dart';
 import 'package:evidya/sharedpref/preference_connector.dart';
-import 'package:evidya/utils/SizeConfigs.dart';
+// import 'package:evidya/utils/SizeConfigs.dart';
 import 'package:evidya/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_progress_dialog/custom_progress_dialog.dart';
-import 'package:flutter/services.dart';
-import '../../main.dart';
+// import 'package:flutter/services.dart';
+// import '../../main.dart';
 
 import 'package:video_player/video_player.dart';
 import '../widget/gradient_bg_view.dart';
@@ -56,7 +56,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Map loginJson;
-  LoginData userData;
+  // LoginData userData;
   Map profileJson;
   Data profileData;
   String profileUrl = "";
@@ -86,29 +86,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   // String? bloc;
 
   String feature = 'All';
-  final List<String> content = [
-    'Prograhrg',
-    'Design',
-    'Marketing',
-    'Business',
-    'Video Editing',
-    'Arts',
-    'Foreign Language',
-  ];
-  final List<String> featured = [
-    'All',
-    'Trending',
-    'Most Viewed',
-    'Popular',
-    'Most Liked',
-  ];
+  // final List<String> content = [
+  //   'Prograhrg',
+  //   'Design',
+  //   'Marketing',
+  //   'Business',
+  //   'Video Editing',
+  //   'Arts',
+  //   'Foreign Language',
+  // ];
+  // final List<String> featured = [
+  //   'All',
+  //   'Trending',
+  //   'Most Viewed',
+  //   'Popular',
+  //   'Most Liked',
+  // ];
 
-  _getVideoBackground() {
-    VideoPlayer(_controller);
-  }
+  // _getVideoBackground() {
+  //   VideoPlayer(_controller);
+  // }
 
   // get Initial => InitialLoader;
-  VideoPlayerController _controller;
+  // VideoPlayerController _controller;
 
   @override
   void initState() {
@@ -116,11 +116,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     sharePreferenceData();
     _FetchData();
     _homebloc = HomeBloc(HomeState(false));
-    _controller = VideoPlayerController.network(
-        'https://bvidya.websites4demo.com/temporary/video/Bvidya-Video.mp4')
-      ..initialize().then((_) {
-        setState(() {});
-      });
+    // _controller = VideoPlayerController.network(
+    //     'https://bvidya.websites4demo.com/temporary/video/Bvidya-Video.mp4')
+    //   ..initialize().then((_) {
+    //     setState(() {});
+    //   });
   }
 
   void sharePreferenceData() async {
@@ -130,31 +130,30 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     debugPrint("Image $image1 Role $role");
     await PreferenceConnector.getJsonToSharedPreferencetoken(
             StringConstant.Userdata)
-        .then((value) => {
-              if (value != null)
-                {
-                  userdata = jsonDecode(value.toString()),
-                  setState(() {
-                    localdata = PrefranceData.fromJson(userdata);
-                    name = localdata.name;
-                    email = localdata.email;
-                    var Role = localdata.role;
-                    instructorId = localdata.id;
-                    token = userdata['auth_token'];
-                    debugPrint("UserToken $token Roles $instructorId");
-                    instructorCourses(instructorId);
-                  }),
-                }
-            });
+        .then((value) {
+      if (value != null) {
+        final userdata = jsonDecode(value);
+        setState(() {
+          localdata = PrefranceData.fromJson(userdata);
+          name = localdata.name;
+          email = localdata.email;
+          var Role = localdata.role;
+          instructorId = localdata.id;
+          token = userdata['auth_token'];
+          debugPrint("UserToken $token Roles $instructorId");
+          instructorCourses(instructorId);
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    if (_controller != null) {
-      _controller.dispose();
-      _controller = null;
-    }
+    // if (_controller != null) {
+    //   _controller.dispose();
+    //   _controller = null;
+    // }
   }
 
   @override
@@ -176,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             margin: EdgeInsets.only(top: 1.h, left: 1.h, right: 1.h),
             padding: EdgeInsets.only(top: 2.h, left: 2.h, right: 2.h),
             width: double.infinity,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage(
                     "assets/images/whitebg.png",
@@ -642,11 +641,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   featuredCategory.length, (int index) {
                                 return InkWell(
                                   child: Chip(
-                                    shape: StadiumBorder(
-                                        side: BorderSide(
-                                      width: .5,
-                                      color: Colors.black,
-                                    )),
+                                    shape: const StadiumBorder(
+                                      side: BorderSide(
+                                        width: .5,
+                                        color: Colors.black,
+                                      ),
+                                    ),
                                     backgroundColor: Colors.white,
                                     label: Text(
                                       "${featuredCategory[index].name}",

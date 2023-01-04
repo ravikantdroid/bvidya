@@ -109,7 +109,7 @@ class _SchudleClass_screenState extends State<SchudleClass_screen> {
               height: 100.h,
               width: double.infinity,
               decoration: BoxDecoration(
-                image: DecorationImage(
+                image: const DecorationImage(
                     image: AssetImage(
                       "assets/images/grey_background.jpg",
                     ),

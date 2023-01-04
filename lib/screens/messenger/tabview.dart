@@ -238,7 +238,7 @@ class _MessengerTabState extends State<MessengerTab>
           }
           await prefs.setBool('groupbadge', true);
 
-          final id = await _insertGroupToDb(peerId, model);
+          final id = await _insertGroupToDb(model);
 
           model.id = id.toString();
           if (model.type == 'image' && model.url?.isNotEmpty == true) {
@@ -553,7 +553,7 @@ class _MessengerTabState extends State<MessengerTab>
     return id;
   }
 
-  _insertGroupToDb(String peerid, ChatModel model) async {
+  _insertGroupToDb(ChatModel model) async {
     // row to insert
     Map<String, dynamic> row = {
       DatabaseHelper.Id: null,
@@ -563,8 +563,8 @@ class _MessengerTabState extends State<MessengerTab>
       DatabaseHelper.type: model.type,
       DatabaseHelper.reply: model.reply,
       DatabaseHelper.replyText: model.replyText,
-      DatabaseHelper.from: userpeerid,
-      DatabaseHelper.to: peerid,
+      DatabaseHelper.from: model.from,
+      DatabaseHelper.to: '',
       DatabaseHelper.groupname: model.group,
       DatabaseHelper.textId: model.textId,
       DatabaseHelper.url: model.url

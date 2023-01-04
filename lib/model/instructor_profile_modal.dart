@@ -11,10 +11,11 @@ class InstructorProfileModal {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.body != null) {
-      data['body'] = this.body.toJson();
+    data['status'] = status;
+    if (body != null) {
+      data['body'] = body.toJson();
     }
-    data['status'] = this.status;
+
     return data;
   }
 }
@@ -30,16 +31,16 @@ class Body {
 
   Body(
       {this.profile,
-        this.followers,
-        this.watchtime,
-        this.courses,
-        this.meetings,
-        this.webinar,
-        this.liked});
+      this.followers,
+      this.watchtime,
+      this.courses,
+      this.meetings,
+      this.webinar,
+      this.liked});
 
   Body.fromJson(Map<String, dynamic> json) {
     profile =
-    json['profile'] != null ? new Profile.fromJson(json['profile']) : null;
+        json['profile'] != null ? new Profile.fromJson(json['profile']) : null;
     if (json['followers'] != null) {
       followers = <Followers>[];
       json['followers'].forEach((v) {
@@ -129,25 +130,25 @@ class Profile {
 
   Profile(
       {this.name,
-        this.phone,
-        this.email,
-        this.gender,
-        this.age,
-        this.language,
-        this.bio,
-        this.occupation,
-        this.experience,
-        this.specialization,
-        this.city,
-        this.state,
-        this.country,
-        this.address,
-        this.image,
-        this.twitterUrl,
-        this.facebookUrl,
-        this.instagramUrl,
-        this.youtubeUrl,
-        this.websiteUrl});
+      this.phone,
+      this.email,
+      this.gender,
+      this.age,
+      this.language,
+      this.bio,
+      this.occupation,
+      this.experience,
+      this.specialization,
+      this.city,
+      this.state,
+      this.country,
+      this.address,
+      this.image,
+      this.twitterUrl,
+      this.facebookUrl,
+      this.instagramUrl,
+      this.youtubeUrl,
+      this.websiteUrl});
 
   Profile.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -251,22 +252,22 @@ class Courses {
 
   Courses(
       {this.id,
-        this.name,
-        this.categoryId,
-        this.subcategoryId,
-        this.userId,
-        this.description,
-        this.level,
-        this.language,
-        this.duration,
-        this.image,
-        this.slug,
-        this.rating,
-        this.ratingCount,
-        this.views,
-        this.status,
-        this.createdAt,
-        this.updatedAt});
+      this.name,
+      this.categoryId,
+      this.subcategoryId,
+      this.userId,
+      this.description,
+      this.level,
+      this.language,
+      this.duration,
+      this.image,
+      this.slug,
+      this.rating,
+      this.ratingCount,
+      this.views,
+      this.status,
+      this.createdAt,
+      this.updatedAt});
 
   Courses.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -330,20 +331,20 @@ class Meetings {
 
   Meetings(
       {this.id,
-        this.userId,
-        this.meetingId,
-        this.name,
-        this.description,
-        this.status,
-        this.streamChannel,
-        this.streamToken,
-        this.startsAt,
-        this.endsAt,
-        this.repeats,
-        this.disableVideo,
-        this.disableAudio,
-        this.createdAt,
-        this.updatedAt});
+      this.userId,
+      this.meetingId,
+      this.name,
+      this.description,
+      this.status,
+      this.streamChannel,
+      this.streamToken,
+      this.startsAt,
+      this.endsAt,
+      this.repeats,
+      this.disableVideo,
+      this.disableAudio,
+      this.createdAt,
+      this.updatedAt});
 
   Meetings.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -395,12 +396,12 @@ class Webinar {
 
   Webinar(
       {this.id,
-        this.name,
-        this.description,
-        this.image,
-        this.status,
-        this.startsAt,
-        this.endsAt});
+      this.name,
+      this.description,
+      this.image,
+      this.status,
+      this.startsAt,
+      this.endsAt});
 
   Webinar.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -443,19 +444,19 @@ class Liked {
 
   Liked(
       {this.id,
-        this.name,
-        this.courseId,
-        this.userId,
-        this.description,
-        this.image,
-        this.videoId,
-        this.duration,
-        this.createdAt,
-        this.updatedAt,
-        this.rating,
-        this.ratingCount,
-        this.videoTitle,
-        this.videoPath});
+      this.name,
+      this.courseId,
+      this.userId,
+      this.description,
+      this.image,
+      this.videoId,
+      this.duration,
+      this.createdAt,
+      this.updatedAt,
+      this.rating,
+      this.ratingCount,
+      this.videoTitle,
+      this.videoPath});
 
   Liked.fromJson(Map<String, dynamic> json) {
     id = json['id'];

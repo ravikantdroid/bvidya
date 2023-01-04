@@ -95,6 +95,7 @@ class _Chat_ScreenState extends State<Chat_Screen> {
   var _uplordstatus = 0;
   final List<bool> _seleteduserlist = [];
 
+  AgoraRtmClient _client;
   bool _sendingMessage = false;
   // AnimationController _animController;
 
@@ -109,9 +110,16 @@ class _Chat_ScreenState extends State<Chat_Screen> {
     queryRowCount();
     localdata();
     super.initState();
+
     _recieptPerson = widget.recentchatuserdetails.name;
     final code = widget.rtmpeerid.hashCode;
     LocalNotificationService.clearPool(code);
+
+    if (widget.client != null) {
+      _client = widget.client;
+    } else {
+      _createClient();
+    }
     // getDeviceTokenToSendNotification();
   }
 
@@ -155,6 +163,8 @@ class _Chat_ScreenState extends State<Chat_Screen> {
         chatLogController.addLog(m);
       }
     }
+    // final dbHelper = DatabaseHelper.instance;
+    await _dbHelper.deletebadge(widget.rtmpeerid);
   }
 
   @override
@@ -182,1180 +192,1190 @@ class _Chat_ScreenState extends State<Chat_Screen> {
         // ),
         child: SafeArea(
           child: Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: PreferredSize(
-                  preferredSize: Size.fromHeight(11.h),
-                  // here the desired height
-                  child: Column(
-                    children: [
-                      Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 1.h, vertical: 1.h),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  InkWell(
-                                      customBorder: const CircleBorder(),
-                                      onTap: () {
-                                        _dbHelper.deletebadge(widget.rtmpeerid);
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const BottomNavbar(
-                                                        index: 2)),
-                                            (Route<dynamic> route) => false);
-                                      },
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.transparent,
-                                        radius: 18,
-                                        child: Icon(Icons.keyboard_backspace,
-                                            size: 3.h, color: Colors.white),
-                                      )),
-                                  SizedBox(
-                                    width: 1.h,
-                                  ),
-                                  InkWell(
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          height: 7.h,
-                                          width: 15.w,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: Colors.white,
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            child: widget.recentchatuserdetails
-                                                        .profile_image ==
-                                                    ''
-                                                ? Image.asset(
-                                                    'assets/images/profile_demo.png',
-                                                    height: 7.h,
-                                                    width: 15.w,
-                                                    fit: BoxFit.contain,
-                                                  )
-                                                : CachedNetworkImage(
-                                                    fit: BoxFit.cover,
-                                                    width: 25.w,
-                                                    height: 10.h,
-                                                    imageUrl: StringConstant
-                                                            .IMAGE_URL +
-                                                        widget
-                                                            .recentchatuserdetails
-                                                            .profile_image,
-                                                    placeholder:
-                                                        (context, url) => Helper
-                                                            .onScreenProgress(),
-                                                    errorWidget:
-                                                        (context, url, error) =>
-                                                            const Icon(
-                                                                Icons.person),
-                                                  ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 1.h),
-                                        SizedBox(
-                                          width: 40.w,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                widget
-                                                    .recentchatuserdetails.name,
-                                                maxLines: 1,
-                                                style: TextStyle(
-                                                    fontSize: 16.sp,
-                                                    color: Colors.white,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              statusWidget(),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
+            backgroundColor: Colors.transparent,
+            appBar: PreferredSize(
+                preferredSize: Size.fromHeight(11.h),
+                // here the desired height
+                child: Column(
+                  children: [
+                    Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 1.h, vertical: 1.h),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                InkWell(
+                                    customBorder: const CircleBorder(),
                                     onTap: () {
-                                      Navigator.push(
+                                      _dbHelper.deletebadge(widget.rtmpeerid);
+                                      Navigator.pushAndRemoveUntil(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  SenderProfilePage(
-                                                      senderdetails: widget
-                                                          .recentchatuserdetails,
-                                                      peerid: _userpeerid,
-                                                      status: widget.status,
-                                                      // logcontroller:
-                                                      //     widget.logController,
-                                                      senderpeerid: widget
-                                                          .recentchatuserdetails
-                                                          .peerId,
-                                                      senderName: widget
-                                                          .recentchatuserdetails
-                                                          .name)));
+                                                  const BottomNavbar(index: 2)),
+                                          (Route<dynamic> route) => false);
                                     },
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  InkWell(
-                                    customBorder: const CircleBorder(),
                                     child: CircleAvatar(
-                                      backgroundColor: Colors.white,
-                                      radius: 2.2.h,
-                                      child: Image.asset(
-                                        'assets/icons/svg/camera.png',
-                                        height: 3.h,
-                                        width: 3.h,
-                                        color: const Color(0xFF5c0e35),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => VideoCallScreen(
-                                            // userName: _loginData.id.toString(),
-                                            userCallId: widget
-                                                .recentchatuserdetails.id
-                                                .toString(),
-                                            userAuthToken: _loginData.authToken,
-                                            userCallName: widget
-                                                .recentchatuserdetails.name,
-                                            calleeFcmToken: widget
-                                                .recentchatuserdetails
-                                                .fcm_token,
-                                            devicefcmtoken: _devicefcmtoken,
-                                            userprofileimage: _loginData.image,
-                                          ),
+                                      backgroundColor: Colors.transparent,
+                                      radius: 18,
+                                      child: Icon(Icons.keyboard_backspace,
+                                          size: 3.h, color: Colors.white),
+                                    )),
+                                SizedBox(
+                                  width: 1.h,
+                                ),
+                                InkWell(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 7.h,
+                                        width: 15.w,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.white,
                                         ),
-                                      );
-                                    },
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: widget.recentchatuserdetails
+                                                      .profile_image ==
+                                                  ''
+                                              ? Image.asset(
+                                                  'assets/images/profile_demo.png',
+                                                  height: 7.h,
+                                                  width: 15.w,
+                                                  fit: BoxFit.contain,
+                                                )
+                                              : CachedNetworkImage(
+                                                  fit: BoxFit.cover,
+                                                  width: 25.w,
+                                                  height: 10.h,
+                                                  imageUrl: StringConstant
+                                                          .IMAGE_URL +
+                                                      widget
+                                                          .recentchatuserdetails
+                                                          .profile_image,
+                                                  placeholder: (context, url) =>
+                                                      Helper.onScreenProgress(),
+                                                  errorWidget: (context, url,
+                                                          error) =>
+                                                      const Icon(Icons.person),
+                                                ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 1.h),
+                                      SizedBox(
+                                        width: 40.w,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              widget.recentchatuserdetails.name,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                  fontSize: 16.sp,
+                                                  color: Colors.white,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            statusWidget(),
+                                          ],
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                  const SizedBox(width: 10),
-                                  InkWell(
-                                    customBorder: const CircleBorder(),
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.white,
-                                      radius: 2.2.h,
-                                      child: Image.asset(
-                                        'assets/icons/svg/call.png',
-                                        height: 3.h,
-                                        width: 3.h,
-                                        color: const Color(0xFF5c0e35),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.of(context).push(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
                                         MaterialPageRoute(
-                                          builder: (context) => AudioCallScreen(
-                                            // userName: _loginData.id.toString(),
-                                            userCallId:
-                                                widget.recentchatuserdetails.id,
-                                            myAuthToken: _loginData.authToken,
-                                            userCallName: widget
-                                                .recentchatuserdetails.name,
-                                            userprofileimage: _loginData.image,
-                                            othersFcmToken: widget
-                                                .recentchatuserdetails
-                                                .fcm_token,
-                                            devicefcmtoken: _devicefcmtoken,
-                                          ),
+                                            builder: (context) =>
+                                                SenderProfilePage(
+                                                    senderdetails: widget
+                                                        .recentchatuserdetails,
+                                                    peerid: _userpeerid,
+                                                    status: widget.status,
+                                                    // logcontroller:
+                                                    //     widget.logController,
+                                                    senderpeerid: widget
+                                                        .recentchatuserdetails
+                                                        .peerId,
+                                                    senderName: widget
+                                                        .recentchatuserdetails
+                                                        .name)));
+                                  },
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  customBorder: const CircleBorder(),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: 2.2.h,
+                                    child: Image.asset(
+                                      'assets/icons/svg/camera.png',
+                                      height: 3.h,
+                                      width: 3.h,
+                                      color: const Color(0xFF5c0e35),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => VideoCallScreen(
+                                          // userName: _loginData.id.toString(),
+                                          userCallId: widget
+                                              .recentchatuserdetails.id
+                                              .toString(),
+                                          userAuthToken: _loginData.authToken,
+                                          userCallName:
+                                              widget.recentchatuserdetails.name,
+                                          calleeFcmToken: widget
+                                              .recentchatuserdetails.fcm_token,
+                                          devicefcmtoken: _devicefcmtoken,
+                                          userprofileimage: _loginData.image,
                                         ),
-                                      );
-                                    },
-                                  )
-                                ],
-                              )
-                            ],
-                          )),
-                    ],
-                  )),
-              body: Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                  color: Colors.transparent,
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/grey_background.jpg'),
-                      fit: BoxFit.fill),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 10),
+                                InkWell(
+                                  customBorder: const CircleBorder(),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: 2.2.h,
+                                    child: Image.asset(
+                                      'assets/icons/svg/call.png',
+                                      height: 3.h,
+                                      width: 3.h,
+                                      color: const Color(0xFF5c0e35),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => AudioCallScreen(
+                                          // userName: _loginData.id.toString(),
+                                          userCallId:
+                                              widget.recentchatuserdetails.id,
+                                          myAuthToken: _loginData.authToken,
+                                          userCallName:
+                                              widget.recentchatuserdetails.name,
+                                          userprofileimage: _loginData.image,
+                                          othersFcmToken: widget
+                                              .recentchatuserdetails.fcm_token,
+                                          devicefcmtoken: _devicefcmtoken,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              ],
+                            )
+                          ],
+                        )),
+                  ],
+                )),
+            body: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                        child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 1.h, vertical: 1.h),
-                      child: Column(
-                        children: <Widget>[
-                          ValueListenableBuilder(
-                            valueListenable: chatLogController,
-                            builder: (context, log, wdgt) {
-                              if (log.length > _length) {
-                                _scrollDown(log.length);
-                                if (_length == 0) {
-                                  _length = log.length;
-                                } else if (_length != log.length) {
-                                  _length++;
-                                }
+                color: Colors.transparent,
+                image: DecorationImage(
+                    image: AssetImage('assets/images/grey_background.jpg'),
+                    fit: BoxFit.fill),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                      child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 1.h, vertical: 1.h),
+                    child: Column(
+                      children: <Widget>[
+                        ValueListenableBuilder(
+                          valueListenable: chatLogController,
+                          builder: (context, log, wdgt) {
+                            if (log.length > _length) {
+                              _scrollDown(log.length);
+                              if (_length == 0) {
+                                _length = log.length;
+                              } else if (_length != log.length) {
+                                _length++;
                               }
-                              return Expanded(
-                                child: ListView.separated(
-                                  controller: _controller,
-                                  // physics: const NeverScrollableScrollPhysics(),
-                                  reverse: false,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, i) {
-                                    ChatModel chatModel = log[i];
-                                    // dynamic parts = log[i].split('#@####@#');
-                                    print('print233' +
-                                        chatModel.toJson().toString());
+                            }
+                            return Expanded(
+                              child: ListView.separated(
+                                controller: _controller,
+                                // physics: const NeverScrollableScrollPhysics(),
+                                reverse: false,
+                                shrinkWrap: true,
+                                itemBuilder: (context, i) {
+                                  ChatModel chatModel = log[i];
+                                  // dynamic parts = log[i].split('#@####@#');
+                                  print('print233' +
+                                      chatModel.toJson().toString());
 
-                                    if (chatModel.to == widget.rtmpeerid ||
-                                        chatModel.from == widget.rtmpeerid) {
-                                      // debugPrint('print message:' +
-                                      //     chatModel.message +
-                                      //     ' ' +
-                                      //     chatModel.type);
+                                  if (chatModel.to == widget.rtmpeerid ||
+                                      chatModel.from == widget.rtmpeerid) {
+                                    // debugPrint('print message:' +
+                                    //     chatModel.message +
+                                    //     ' ' +
+                                    //     chatModel.type);
 
-                                      // if (parts.length > 0)
+                                    // if (parts.length > 0)
 
-                                      if (chatModel.diraction.trim() != null &&
-                                          chatModel.type != 'image' &&
-                                          chatModel.type != 'network') {
-                                        return SwipeTo(
-                                            child: Container(
-                                                alignment:
-                                                    (chatModel.diraction !=
-                                                            'send'
-                                                        ? Alignment.topLeft
-                                                        : Alignment.topRight),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment: chatModel
-                                                              .diraction !=
-                                                          'send'
-                                                      ? MainAxisAlignment.start
-                                                      : MainAxisAlignment.end,
-                                                  children: [
-                                                    if (chatModel.diraction ==
-                                                        'Receive')
-                                                      CircleAvatar(
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0xFF5c0e35),
-                                                        child: Text(
-                                                          widget
-                                                              .recentchatuserdetails
-                                                              .name[0],
-                                                          style:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                        ),
+                                    if (chatModel.diraction.trim() != null &&
+                                        chatModel.type != 'image' &&
+                                        chatModel.type != 'network') {
+                                      return SwipeTo(
+                                          child: Container(
+                                              alignment:
+                                                  (chatModel.diraction != 'send'
+                                                      ? Alignment.topLeft
+                                                      : Alignment.topRight),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment: chatModel
+                                                            .diraction !=
+                                                        'send'
+                                                    ? MainAxisAlignment.start
+                                                    : MainAxisAlignment.end,
+                                                children: [
+                                                  if (chatModel.diraction ==
+                                                      'Receive')
+                                                    CircleAvatar(
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFF5c0e35),
+                                                      child: Text(
+                                                        widget
+                                                            .recentchatuserdetails
+                                                            .name[0],
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.white),
                                                       ),
-                                                    const SizedBox(width: 10),
-                                                    Container(
-                                                      // constraints:
-                                                      //     BoxConstraints(
-                                                      //         minWidth: 30.w,
-                                                      //         maxWidth: 60.w),
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              0),
-                                                      decoration: chatModel
-                                                                  .diraction !=
-                                                              'send'
-                                                          ? const BoxDecoration(
-                                                              color: Colors
-                                                                  .black12,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        10),
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        10),
-                                                                bottomRight:
-                                                                    Radius
-                                                                        .circular(
-                                                                            10),
-                                                              ))
-                                                          : const BoxDecoration(
-                                                              gradient:
-                                                                  LinearGradient(
-                                                                begin: Alignment
-                                                                    .topCenter,
-                                                                end: Alignment
-                                                                    .bottomCenter,
-                                                                colors: [
-                                                                  Color(
-                                                                      0xFF901133),
-                                                                  Color(
-                                                                      0xFF5c0e35),
-                                                                ],
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        10),
-                                                                //topRight: Radius.circular(10),
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        10),
-                                                                bottomRight:
-                                                                    Radius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
+                                                    ),
+                                                  const SizedBox(width: 10),
+                                                  Container(
+                                                    // constraints:
+                                                    //     BoxConstraints(
+                                                    //         minWidth: 30.w,
+                                                    //         maxWidth: 60.w),
+                                                    padding:
+                                                        const EdgeInsets.all(0),
+                                                    decoration: chatModel
+                                                                .diraction !=
+                                                            'send'
+                                                        ? const BoxDecoration(
+                                                            color:
+                                                                Colors.black12,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topRight: Radius
+                                                                  .circular(10),
+                                                              bottomLeft: Radius
+                                                                  .circular(10),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          10),
+                                                            ))
+                                                        : const BoxDecoration(
+                                                            gradient:
+                                                                LinearGradient(
+                                                              begin: Alignment
+                                                                  .topCenter,
+                                                              end: Alignment
+                                                                  .bottomCenter,
+                                                              colors: [
+                                                                Color(
+                                                                    0xFF901133),
+                                                                Color(
+                                                                    0xFF5c0e35),
+                                                              ],
                                                             ),
-                                                      child: GestureDetector(
-                                                        onLongPressUp: () {
-                                                          _popupdialog(
-                                                              chatModel.id,
-                                                              chatModel,
-                                                              i);
-                                                        },
-                                                        onTap: () {
-                                                          if (chatModel.type ==
-                                                              'doc') {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .push(
-                                                              MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    Pdfviewer(
-                                                                        pdfpath:
-                                                                            chatModel.url),
-                                                              ),
-                                                            );
-                                                          } else if (chatModel
-                                                                  .type ==
-                                                              'video') {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .push(
-                                                              MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    Msgvideoplayer(
-                                                                        videourl:
-                                                                            chatModel.url),
-                                                              ),
-                                                            );
-                                                          } else if (chatModel
-                                                                  .type ==
-                                                              'image') {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .push(
-                                                              MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    FullScreenImage(
-                                                                        image: chatModel
-                                                                            .url),
-                                                              ),
-                                                            );
-                                                          }
-                                                        },
-                                                        child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(5.0),
-                                                            child: chatModel.type ==
-                                                                        'text' ||
-                                                                    chatModel
-                                                                            .type ==
-                                                                        'doc' ||
-                                                                    chatModel
-                                                                            .type ==
-                                                                        'video'
-                                                                ? Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .end,
-                                                                    // mainAxisSize:
-                                                                    //     MainAxisSize
-                                                                    //         .min,
-                                                                    children: [
-                                                                      Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          if (chatModel.reply ==
-                                                                              'reply')
-                                                                            _replyBox(chatModel.diraction,
-                                                                                chatModel.replyText),
-                                                                          if (chatModel.reply ==
-                                                                              'forword')
-                                                                            IntrinsicHeight(
-                                                                              child: Text(chatModel.diraction == 'send' ? 'forward' : 'forwarded...', style: TextStyle(color: Colors.yellow, fontStyle: FontStyle.normal, fontWeight: FontWeight.w100)),
-                                                                            ),
-                                                                          if (chatModel.type ==
-                                                                              'doc')
-                                                                            const IntrinsicHeight(
-                                                                              child: Text('Pdf', style: TextStyle(color: Colors.yellow, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
-                                                                            ),
-                                                                          if (chatModel.type ==
-                                                                              'video')
-                                                                            const IntrinsicHeight(
-                                                                              child: Text('Video', style: TextStyle(color: Colors.yellow, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
-                                                                            ),
-                                                                          Container(
-                                                                            constraints:
-                                                                                BoxConstraints(minWidth: 25.w, maxWidth: 60.w),
-                                                                            padding: const EdgeInsets.only(
-                                                                                left: 8.0,
-                                                                                right: 8.0,
-                                                                                top: 5.0,
-                                                                                bottom: 5),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(10),
+                                                              //topRight: Radius.circular(10),
+                                                              bottomLeft: Radius
+                                                                  .circular(10),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                          ),
+                                                    child: GestureDetector(
+                                                      onLongPressUp: () {
+                                                        _popupdialog(
+                                                            chatModel.id,
+                                                            chatModel,
+                                                            i);
+                                                      },
+                                                      onTap: () {
+                                                        if (chatModel.type ==
+                                                            'doc') {
+                                                          Navigator.of(context)
+                                                              .push(
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  Pdfviewer(
+                                                                      pdfpath:
+                                                                          chatModel
+                                                                              .url),
+                                                            ),
+                                                          );
+                                                        } else if (chatModel
+                                                                .type ==
+                                                            'video') {
+                                                          Navigator.of(context)
+                                                              .push(
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  Msgvideoplayer(
+                                                                      videourl:
+                                                                          chatModel
+                                                                              .url),
+                                                            ),
+                                                          );
+                                                        } else if (chatModel
+                                                                .type ==
+                                                            'image') {
+                                                          Navigator.of(context)
+                                                              .push(
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  FullScreenImage(
+                                                                      image: chatModel
+                                                                          .url),
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                      child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(5.0),
+                                                          child: chatModel.type ==
+                                                                      'text' ||
+                                                                  chatModel
+                                                                          .type ==
+                                                                      'doc' ||
+                                                                  chatModel
+                                                                          .type ==
+                                                                      'video'
+                                                              ? Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .end,
+                                                                  // mainAxisSize:
+                                                                  //     MainAxisSize
+                                                                  //         .min,
+                                                                  children: [
+                                                                    Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        if (chatModel.reply ==
+                                                                            'reply')
+                                                                          _replyBox(
+                                                                              chatModel.diraction,
+                                                                              chatModel.replyText),
+                                                                        if (chatModel.reply ==
+                                                                            'forword')
+                                                                          IntrinsicHeight(
                                                                             child:
-                                                                                Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                                                                              // if (chatModel.type == 'video' || chatModel.type == 'doc')
-                                                                              //   _progressbar(log.length, log[i], i),
-                                                                              textdocview(chatModel),
-                                                                            ]),
+                                                                                Text(chatModel.diraction == 'send' ? 'forward' : 'forwarded...', style: TextStyle(color: Colors.yellow, fontStyle: FontStyle.normal, fontWeight: FontWeight.w100)),
+                                                                          ),
+                                                                        if (chatModel.type ==
+                                                                            'doc')
+                                                                          const IntrinsicHeight(
+                                                                            child:
+                                                                                Text('Pdf', style: TextStyle(color: Colors.yellow, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
+                                                                          ),
+                                                                        if (chatModel.type ==
+                                                                            'video')
+                                                                          const IntrinsicHeight(
+                                                                            child:
+                                                                                Text('Video', style: TextStyle(color: Colors.yellow, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
+                                                                          ),
+                                                                        Container(
+                                                                          constraints: BoxConstraints(
+                                                                              minWidth: 25.w,
+                                                                              maxWidth: 60.w),
+                                                                          padding: const EdgeInsets.only(
+                                                                              left: 8.0,
+                                                                              right: 8.0,
+                                                                              top: 5.0,
+                                                                              bottom: 5),
+                                                                          child: Row(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                                              children: [
+                                                                                // if (chatModel.type == 'video' || chatModel.type == 'doc')
+                                                                                //   _progressbar(log.length, log[i], i),
+                                                                                textdocview(chatModel),
+                                                                              ]),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      // mainAxisSize:
+                                                                      //     MainAxisSize.min,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .end,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .end,
+                                                                      children: [
+                                                                        // Flexible(),
+                                                                        Text(
+                                                                          DateFormat('hh:mm a')
+                                                                              .format(DateTime.parse(chatModel.timestamp)),
+                                                                          style: TextStyle(
+                                                                              color: chatModel.diraction != 'send' ? Colors.black : Colors.white,
+                                                                              fontSize: 10),
+                                                                          textAlign:
+                                                                              TextAlign.end,
+                                                                        ),
+                                                                        SizedBox(
+                                                                            width:
+                                                                                1.w),
+                                                                        if (chatModel.diraction !=
+                                                                            'Receive')
+                                                                          doubletick(
+                                                                              chatModel.deliveryStatus,
+                                                                              chatModel.textId,
+                                                                              log[i])
+                                                                      ],
+                                                                    )
+                                                                  ],
+                                                                )
+                                                              : Column(
+                                                                  children: [
+                                                                    // if (chatModel.url?.isNotEmpty ==
+                                                                    //         true &&
+                                                                    //     chatModel
+                                                                    //         .url
+                                                                    //         .startsWith('http'))
+                                                                    //   CachedNetworkImage(
+                                                                    //     fit: BoxFit
+                                                                    //         .cover,
+                                                                    //     imageUrl:
+                                                                    //         chatModel.url,
+                                                                    //     placeholder: (context, url) =>
+                                                                    //         LinearProgressIndicator(
+                                                                    //       minHeight:
+                                                                    //           20.sp,
+                                                                    //     ),
+                                                                    //     width:
+                                                                    //         50.w,
+                                                                    //     height:
+                                                                    //         30.h,
+                                                                    //     errorWidget: (context, url, error) =>
+                                                                    //         const Icon(
+                                                                    //       Icons.error,
+                                                                    //       size:
+                                                                    //           50,
+                                                                    //     ),
+                                                                    //   ),
+                                                                    // if (chatModel.type ==
+                                                                    //         'network' ||
+                                                                    //     (chatModel.url?.isNotEmpty == true &&
+                                                                    //         chatModel.url.startsWith('http')))
+                                                                    //   CachedNetworkImage(
+                                                                    //     fit: BoxFit
+                                                                    //         .cover,
+                                                                    //     imageUrl:
+                                                                    //         chatModel.url,
+                                                                    //     placeholder: (context, url) =>
+                                                                    //         LinearProgressIndicator(
+                                                                    //       minHeight:
+                                                                    //           20.sp,
+                                                                    //     ),
+                                                                    //     width:
+                                                                    //         50.w,
+                                                                    //     height:
+                                                                    //         30.h,
+                                                                    //     errorWidget: (context, url, error) =>
+                                                                    //         const Icon(
+                                                                    //       Icons.error,
+                                                                    //       size:
+                                                                    //           50,
+                                                                    //     ),
+                                                                    //   ),
+                                                                    chatModel.url?.isNotEmpty ==
+                                                                                true &&
+                                                                            ((chatModel.type == 'image' || chatModel.type == 'network') &&
+                                                                                chatModel.url.startsWith('http'))
+                                                                        ? CachedNetworkImage(
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                            imageUrl:
+                                                                                chatModel.url,
+                                                                            placeholder: (context, url) =>
+                                                                                LinearProgressIndicator(
+                                                                              minHeight: 20.sp,
+                                                                            ),
+                                                                            width:
+                                                                                50.w,
+                                                                            height:
+                                                                                30.h,
+                                                                            errorWidget: (context, url, error) =>
+                                                                                const Icon(
+                                                                              Icons.error,
+                                                                              size: 50,
+                                                                            ),
                                                                           )
-                                                                        ],
-                                                                      ),
-                                                                      Row(
-                                                                        // mainAxisSize:
-                                                                        //     MainAxisSize.min,
+                                                                        : (chatModel.url?.isNotEmpty == true && (chatModel.type == 'image' || chatModel.type == 'network'))
+                                                                            ? Image.file(File(chatModel.url),
+                                                                                fit: BoxFit.cover,
+                                                                                errorBuilder: (context, url, error) => const Icon(
+                                                                                      Icons.error,
+                                                                                      size: 70,
+                                                                                      color: Colors.red,
+                                                                                      semanticLabel: 'image not found',
+                                                                                    ))
+                                                                            : Container(),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            10),
+                                                                    Row(
                                                                         mainAxisAlignment:
                                                                             MainAxisAlignment.end,
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.end,
                                                                         children: [
-                                                                          // Flexible(),
                                                                           Text(
                                                                             DateFormat('hh:mm a').format(DateTime.parse(chatModel.timestamp)),
                                                                             style:
                                                                                 TextStyle(color: chatModel.diraction != 'send' ? Colors.black : Colors.white, fontSize: 10),
                                                                             textAlign:
-                                                                                TextAlign.end,
+                                                                                TextAlign.right,
                                                                           ),
                                                                           SizedBox(
-                                                                              width: 1.w),
+                                                                            width:
+                                                                                1.w,
+                                                                          ),
                                                                           if (chatModel.diraction !=
                                                                               'Receive')
                                                                             doubletick(
                                                                                 chatModel.deliveryStatus,
                                                                                 chatModel.textId,
                                                                                 log[i])
-                                                                        ],
-                                                                      )
-                                                                    ],
-                                                                  )
-                                                                : Column(
-                                                                    children: [
-                                                                      // if (chatModel.url?.isNotEmpty ==
-                                                                      //         true &&
-                                                                      //     chatModel
-                                                                      //         .url
-                                                                      //         .startsWith('http'))
-                                                                      //   CachedNetworkImage(
-                                                                      //     fit: BoxFit
-                                                                      //         .cover,
-                                                                      //     imageUrl:
-                                                                      //         chatModel.url,
-                                                                      //     placeholder: (context, url) =>
-                                                                      //         LinearProgressIndicator(
-                                                                      //       minHeight:
-                                                                      //           20.sp,
-                                                                      //     ),
-                                                                      //     width:
-                                                                      //         50.w,
-                                                                      //     height:
-                                                                      //         30.h,
-                                                                      //     errorWidget: (context, url, error) =>
-                                                                      //         const Icon(
-                                                                      //       Icons.error,
-                                                                      //       size:
-                                                                      //           50,
-                                                                      //     ),
-                                                                      //   ),
-                                                                      // if (chatModel.type ==
-                                                                      //         'network' ||
-                                                                      //     (chatModel.url?.isNotEmpty == true &&
-                                                                      //         chatModel.url.startsWith('http')))
-                                                                      //   CachedNetworkImage(
-                                                                      //     fit: BoxFit
-                                                                      //         .cover,
-                                                                      //     imageUrl:
-                                                                      //         chatModel.url,
-                                                                      //     placeholder: (context, url) =>
-                                                                      //         LinearProgressIndicator(
-                                                                      //       minHeight:
-                                                                      //           20.sp,
-                                                                      //     ),
-                                                                      //     width:
-                                                                      //         50.w,
-                                                                      //     height:
-                                                                      //         30.h,
-                                                                      //     errorWidget: (context, url, error) =>
-                                                                      //         const Icon(
-                                                                      //       Icons.error,
-                                                                      //       size:
-                                                                      //           50,
-                                                                      //     ),
-                                                                      //   ),
-                                                                      chatModel.url?.isNotEmpty == true &&
-                                                                              ((chatModel.type == 'image' || chatModel.type == 'network') && chatModel.url.startsWith('http'))
-                                                                          ? CachedNetworkImage(
-                                                                              fit: BoxFit.cover,
-                                                                              imageUrl: chatModel.url,
-                                                                              placeholder: (context, url) => LinearProgressIndicator(
-                                                                                minHeight: 20.sp,
-                                                                              ),
-                                                                              width: 50.w,
-                                                                              height: 30.h,
-                                                                              errorWidget: (context, url, error) => const Icon(
-                                                                                Icons.error,
-                                                                                size: 50,
-                                                                              ),
-                                                                            )
-                                                                          : (chatModel.url?.isNotEmpty == true && (chatModel.type == 'image' || chatModel.type == 'network'))
-                                                                              ? Image.file(File(chatModel.url),
-                                                                                  fit: BoxFit.cover,
-                                                                                  errorBuilder: (context, url, error) => const Icon(
-                                                                                        Icons.error,
-                                                                                        size: 70,
-                                                                                        color: Colors.red,
-                                                                                        semanticLabel: 'image not found',
-                                                                                      ))
-                                                                              : Container(),
-                                                                      const SizedBox(
-                                                                          height:
-                                                                              10),
-                                                                      Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.end,
-                                                                          children: [
-                                                                            Text(
-                                                                              DateFormat('hh:mm a').format(DateTime.parse(chatModel.timestamp)),
-                                                                              style: TextStyle(color: chatModel.diraction != 'send' ? Colors.black : Colors.white, fontSize: 10),
-                                                                              textAlign: TextAlign.right,
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 1.w,
-                                                                            ),
-                                                                            if (chatModel.diraction !=
-                                                                                'Receive')
-                                                                              doubletick(chatModel.deliveryStatus, chatModel.textId, log[i])
-                                                                          ]),
-                                                                    ],
-                                                                  )),
-                                                      ),
+                                                                        ]),
+                                                                  ],
+                                                                )),
                                                     ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    if (chatModel.diraction ==
-                                                        'send')
-                                                      CircleAvatar(
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0xFF901133),
-                                                        child: Text(
-                                                            '${_loginData.name[0]}',
-                                                            style:
-                                                                const TextStyle(
-                                                                    color: Colors
-                                                                        .white)),
-                                                      ),
-                                                  ],
-                                                )),
-                                            onLeftSwipe: () {
-                                              setState(() {
-                                                _replyVisibility = true;
-                                                _replytex = chatModel.message;
-                                                // replytext(chatModel);
-                                                if (chatModel.type != 'text' &&
-                                                    chatModel.url?.isNotEmpty ==
-                                                        true) {
-                                                  _replyImagePath =
-                                                      chatModel.url;
-                                                  _afile = fileExp.hasMatch(
-                                                      _replyImagePath);
-                                                }
-                                                // debugPrint(afile);
-                                              });
-                                            });
-                                      } else {
-                                        return Container(
-                                          padding: const EdgeInsets.only(
-                                              right: 0.0,
-                                              left: 0.0,
-                                              top: 2,
-                                              bottom: 2),
-                                          alignment:
-                                              (chatModel.diraction != 'send'
-                                                  ? Alignment.topLeft
-                                                  : Alignment.topRight),
-                                          child: GestureDetector(
-                                            onLongPressUp: () {
-                                              _popupdialog(
-                                                  chatModel.id, chatModel, i);
-                                            },
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          FullScreenImage(
-                                                              image: chatModel
-                                                                  .url)));
-                                            },
-                                            child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment: chatModel
-                                                              .diraction !=
-                                                          'send'
-                                                      ? MainAxisAlignment.start
-                                                      : MainAxisAlignment.end,
-                                                  children: [
-                                                    if (chatModel.diraction ==
-                                                        'Receive')
-                                                      CircleAvatar(
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0xFF5c0e35),
-                                                        child: Text(
-                                                          '${widget.recentchatuserdetails.name[0]}',
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  if (chatModel.diraction ==
+                                                      'send')
+                                                    CircleAvatar(
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFF901133),
+                                                      child: Text(
+                                                          '${_loginData.name[0]}',
                                                           style:
                                                               const TextStyle(
                                                                   color: Colors
-                                                                      .white),
-                                                        ),
-                                                      ),
-                                                    const SizedBox(
-                                                      width: 10,
+                                                                      .white)),
                                                     ),
-                                                    Expanded(
-                                                        child:
-                                                            chatModel.type ==
-                                                                    'text'
-                                                                ? Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: <
-                                                                        Widget>[
-                                                                      chatModel.reply ==
-                                                                              'reply'
-                                                                          ? Container(
-                                                                              decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
-                                                                              child: Column(
-                                                                                children: [
-                                                                                  IntrinsicHeight(
-                                                                                    child: Row(
-                                                                                      children: [
-                                                                                        Container(
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Colors.red,
-                                                                                            borderRadius: BorderRadius.only(
-                                                                                              bottomLeft: Radius.circular(30.0),
-                                                                                              topLeft: Radius.circular(30.0),
-                                                                                            ),
-                                                                                          ),
-                                                                                          width: 5.0,
-                                                                                        ),
-                                                                                        Expanded(
-                                                                                          child: Padding(
-                                                                                            padding: const EdgeInsets.all(7.0),
-                                                                                            child: Container(
-                                                                                              decoration: BoxDecoration(
-                                                                                                // color: Colors.grey,
-                                                                                                borderRadius: BorderRadius.circular(8.0),
-                                                                                              ),
-                                                                                              child: Column(
-                                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                                children: [
-                                                                                                  const Text(
-                                                                                                    'Reply',
-                                                                                                    style: TextStyle(
-                                                                                                      fontSize: 18.0,
-                                                                                                      color: Colors.red,
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                  Text(
-                                                                                                    'Replied message' + _replytex,
-                                                                                                    style: const TextStyle(
-                                                                                                      fontSize: 14.0,
-                                                                                                      color: Colors.black,
-                                                                                                    ),
-                                                                                                  )
-                                                                                                ],
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        )
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            )
-                                                                          : Container(),
-                                                                      Text(
-                                                                        chatModel
-                                                                            .message
-                                                                            .trim(),
-                                                                        style: TextStyle(
-                                                                            color: chatModel.diraction != 'send'
-                                                                                ? Colors.black
-                                                                                : Colors.white,
-                                                                            fontSize: 16),
-                                                                        textAlign:
-                                                                            TextAlign.left,
-                                                                      )
-                                                                    ],
-                                                                  )
-                                                                : Container(
-                                                                    constraints: BoxConstraints(
-                                                                        minWidth: 30
-                                                                            .w,
-                                                                        maxWidth:
-                                                                            60.w),
-                                                                    alignment: (chatModel.diraction !=
-                                                                            'send'
-                                                                        ? Alignment
-                                                                            .topLeft
-                                                                        : Alignment
-                                                                            .topRight),
-                                                                    child:
-                                                                        Stack(
-                                                                      children: [
-                                                                        chatModel.type == 'image' ||
-                                                                                chatModel.type == 'network'
-                                                                            ? Stack(
-                                                                                alignment: Alignment.center,
-                                                                                children: [
-                                                                                  ConstrainedBox(
-                                                                                    constraints: const BoxConstraints(maxHeight: 300, minHeight: 200, maxWidth: 500, minWidth: 200),
-                                                                                    child: ClipRRect(
-                                                                                      borderRadius: const BorderRadius.only(
-                                                                                        topLeft: Radius.circular(10),
-                                                                                        //topRight: Radius.circular(10),
-                                                                                        bottomLeft: Radius.circular(10),
-                                                                                        bottomRight: Radius.circular(10),
-                                                                                      ),
-                                                                                      child: (chatModel.url?.isNotEmpty == true && chatModel.url.startsWith('http'))
-                                                                                          ? CachedNetworkImage(
-                                                                                              fit: BoxFit.cover,
-                                                                                              imageUrl: chatModel.url,
-                                                                                              placeholder: (context, url) => LinearProgressIndicator(
-                                                                                                minHeight: 20.sp,
-                                                                                              ),
-                                                                                              width: 50.w,
-                                                                                              height: 30.h,
-                                                                                              errorWidget: (context, url, error) => const Icon(
-                                                                                                Icons.error,
-                                                                                                size: 50,
-                                                                                              ),
-                                                                                            )
-                                                                                          : Image.file(File(chatModel.url),
-                                                                                              fit: BoxFit.cover,
-                                                                                              errorBuilder: (context, url, error) => const Icon(
-                                                                                                    Icons.error,
-                                                                                                    size: 70,
-                                                                                                    color: Colors.blue,
-                                                                                                    semanticLabel: 'image not found',
-                                                                                                  )),
-                                                                                    ),
-                                                                                  ),
-                                                                                  // imageprogressbar(log.length, log[i], i),
-                                                                                ],
-                                                                              )
-                                                                            : chatModel.type == 'video'
-                                                                                ? ClipRRect(
-                                                                                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                                                                    child: AspectRatio(
-                                                                                      aspectRatio: 9 / 16,
-                                                                                      child: VideoPlayer(VideoPlayerController.network(chatModel.url)),
-                                                                                    ))
-                                                                                : CachedNetworkImage(
-                                                                                    fit: BoxFit.cover,
-                                                                                    imageUrl: chatModel.url,
-                                                                                    /*height: 40.h,
-                                                                                      width: 60.w,*/
-                                                                                    placeholder: (context, url) => LinearProgressIndicator(
-                                                                                      minHeight: 20.sp,
-                                                                                    ),
-                                                                                    errorWidget: (context, url, error) => const Icon(
-                                                                                      Icons.error,
-                                                                                      size: 50,
-                                                                                    ),
-                                                                                  ),
-                                                                        Positioned(
-                                                                          bottom:
-                                                                              2,
-                                                                          right:
-                                                                              4,
-                                                                          child:
-                                                                              Align(
-                                                                            alignment:
-                                                                                Alignment.bottomRight,
+                                                ],
+                                              )),
+                                          onLeftSwipe: () {
+                                            setState(() {
+                                              _replyVisibility = true;
+                                              _replytex = chatModel.message;
+                                              // replytext(chatModel);
+                                              if (chatModel.type != 'text' &&
+                                                  chatModel.url?.isNotEmpty ==
+                                                      true) {
+                                                _replyImagePath = chatModel.url;
+                                                _afile = fileExp
+                                                    .hasMatch(_replyImagePath);
+                                              }
+                                              // debugPrint(afile);
+                                            });
+                                          });
+                                    } else {
+                                      return Container(
+                                        padding: const EdgeInsets.only(
+                                            right: 0.0,
+                                            left: 0.0,
+                                            top: 2,
+                                            bottom: 2),
+                                        alignment:
+                                            (chatModel.diraction != 'send'
+                                                ? Alignment.topLeft
+                                                : Alignment.topRight),
+                                        child: GestureDetector(
+                                          onLongPressUp: () {
+                                            _popupdialog(
+                                                chatModel.id, chatModel, i);
+                                          },
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        FullScreenImage(
+                                                            image: chatModel
+                                                                .url)));
+                                          },
+                                          child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment: chatModel
+                                                            .diraction !=
+                                                        'send'
+                                                    ? MainAxisAlignment.start
+                                                    : MainAxisAlignment.end,
+                                                children: [
+                                                  if (chatModel.diraction ==
+                                                      'Receive')
+                                                    CircleAvatar(
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFF5c0e35),
+                                                      child: Text(
+                                                        '${widget.recentchatuserdetails.name[0]}',
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Expanded(
+                                                      child:
+                                                          chatModel.type ==
+                                                                  'text'
+                                                              ? Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    chatModel.reply ==
+                                                                            'reply'
+                                                                        ? Container(
+                                                                            decoration:
+                                                                                BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
                                                                             child:
-                                                                                Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.end,
-                                                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                                                                Column(
                                                                               children: [
-                                                                                Text(
-                                                                                  DateFormat('hh:mm a').format(DateTime.parse(chatModel.timestamp)),
-                                                                                  style: TextStyle(color: chatModel.diraction != 'send' ? Colors.black : Colors.white, fontSize: 10),
-                                                                                  textAlign: TextAlign.end,
+                                                                                IntrinsicHeight(
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      Container(
+                                                                                        decoration: const BoxDecoration(
+                                                                                          color: Colors.red,
+                                                                                          borderRadius: BorderRadius.only(
+                                                                                            bottomLeft: Radius.circular(30.0),
+                                                                                            topLeft: Radius.circular(30.0),
+                                                                                          ),
+                                                                                        ),
+                                                                                        width: 5.0,
+                                                                                      ),
+                                                                                      Expanded(
+                                                                                        child: Padding(
+                                                                                          padding: const EdgeInsets.all(7.0),
+                                                                                          child: Container(
+                                                                                            decoration: BoxDecoration(
+                                                                                              // color: Colors.grey,
+                                                                                              borderRadius: BorderRadius.circular(8.0),
+                                                                                            ),
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                const Text(
+                                                                                                  'Reply',
+                                                                                                  style: TextStyle(
+                                                                                                    fontSize: 18.0,
+                                                                                                    color: Colors.red,
+                                                                                                  ),
+                                                                                                ),
+                                                                                                Text(
+                                                                                                  'Replied message' + _replytex,
+                                                                                                  style: const TextStyle(
+                                                                                                    fontSize: 14.0,
+                                                                                                    color: Colors.black,
+                                                                                                  ),
+                                                                                                )
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      )
+                                                                                    ],
+                                                                                  ),
                                                                                 ),
-                                                                                SizedBox(
-                                                                                  width: 1.w,
+                                                                              ],
+                                                                            ),
+                                                                          )
+                                                                        : Container(),
+                                                                    Text(
+                                                                      chatModel
+                                                                          .message
+                                                                          .trim(),
+                                                                      style: TextStyle(
+                                                                          color: chatModel.diraction != 'send'
+                                                                              ? Colors.black
+                                                                              : Colors.white,
+                                                                          fontSize: 16),
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .left,
+                                                                    )
+                                                                  ],
+                                                                )
+                                                              : Container(
+                                                                  constraints: BoxConstraints(
+                                                                      minWidth:
+                                                                          30.w,
+                                                                      maxWidth:
+                                                                          60.w),
+                                                                  alignment: (chatModel
+                                                                              .diraction !=
+                                                                          'send'
+                                                                      ? Alignment
+                                                                          .topLeft
+                                                                      : Alignment
+                                                                          .topRight),
+                                                                  child: Stack(
+                                                                    children: [
+                                                                      chatModel.type == 'image' ||
+                                                                              chatModel.type == 'network'
+                                                                          ? Stack(
+                                                                              alignment: Alignment.center,
+                                                                              children: [
+                                                                                ConstrainedBox(
+                                                                                  constraints: const BoxConstraints(maxHeight: 300, minHeight: 200, maxWidth: 500, minWidth: 200),
+                                                                                  child: ClipRRect(
+                                                                                    borderRadius: const BorderRadius.only(
+                                                                                      topLeft: Radius.circular(10),
+                                                                                      //topRight: Radius.circular(10),
+                                                                                      bottomLeft: Radius.circular(10),
+                                                                                      bottomRight: Radius.circular(10),
+                                                                                    ),
+                                                                                    child: (chatModel.url?.isNotEmpty == true && chatModel.url.startsWith('http'))
+                                                                                        ? CachedNetworkImage(
+                                                                                            fit: BoxFit.cover,
+                                                                                            imageUrl: chatModel.url,
+                                                                                            placeholder: (context, url) => LinearProgressIndicator(
+                                                                                              minHeight: 20.sp,
+                                                                                            ),
+                                                                                            width: 50.w,
+                                                                                            height: 30.h,
+                                                                                            errorWidget: (context, url, error) => const Icon(
+                                                                                              Icons.error,
+                                                                                              size: 50,
+                                                                                            ),
+                                                                                          )
+                                                                                        : Image.file(File(chatModel.url),
+                                                                                            fit: BoxFit.cover,
+                                                                                            errorBuilder: (context, url, error) => const Icon(
+                                                                                                  Icons.error,
+                                                                                                  size: 70,
+                                                                                                  color: Colors.blue,
+                                                                                                  semanticLabel: 'image not found',
+                                                                                                )),
+                                                                                  ),
                                                                                 ),
-                                                                                if (chatModel.diraction != 'Receive') doubletick(chatModel.deliveryStatus, chatModel.textId, log[i])
+                                                                                // imageprogressbar(log.length, log[i], i),
+                                                                              ],
+                                                                            )
+                                                                          : chatModel.type == 'video'
+                                                                              ? ClipRRect(
+                                                                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                                                                  child: AspectRatio(
+                                                                                    aspectRatio: 9 / 16,
+                                                                                    child: VideoPlayer(VideoPlayerController.network(chatModel.url)),
+                                                                                  ))
+                                                                              : CachedNetworkImage(
+                                                                                  fit: BoxFit.cover,
+                                                                                  imageUrl: chatModel.url,
+                                                                                  /*height: 40.h,
+                                                                                      width: 60.w,*/
+                                                                                  placeholder: (context, url) => LinearProgressIndicator(
+                                                                                    minHeight: 20.sp,
+                                                                                  ),
+                                                                                  errorWidget: (context, url, error) => const Icon(
+                                                                                    Icons.error,
+                                                                                    size: 50,
+                                                                                  ),
+                                                                                ),
+                                                                      Positioned(
+                                                                        bottom:
+                                                                            2,
+                                                                        right:
+                                                                            4,
+                                                                        child:
+                                                                            Align(
+                                                                          alignment:
+                                                                              Alignment.bottomRight,
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.end,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.end,
+                                                                            children: [
+                                                                              Text(
+                                                                                DateFormat('hh:mm a').format(DateTime.parse(chatModel.timestamp)),
+                                                                                style: TextStyle(color: chatModel.diraction != 'send' ? Colors.black : Colors.white, fontSize: 10),
+                                                                                textAlign: TextAlign.end,
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 1.w,
+                                                                              ),
+                                                                              if (chatModel.diraction != 'Receive')
+                                                                                doubletick(chatModel.deliveryStatus, chatModel.textId, log[i])
 
-                                                                                /*: Icon(
+                                                                              /*: Icon(
                                                                                           Icons.done_all_outlined,
                                                                                           color: onlinestatus == 'online' ? Colors.blue : Colors.white,
                                                                                           size: 15,
                                                                                         ),*/
-                                                                              ],
-                                                                            ),
+                                                                            ],
                                                                           ),
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  )),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    if (chatModel.diraction ==
-                                                        'send')
-                                                      CircleAvatar(
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0xFF901133),
-                                                        child: Text(
-                                                            '${_loginData.name[0]}',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white)),
-                                                      ),
-                                                  ],
-                                                )),
-                                          ),
-                                        );
-                                      }
-
-                                      //  else {
-                                      //   return null;
-                                      // }
-                                    } else {
-                                      return null;
-                                    }
-                                  },
-                                  itemCount: log.length,
-                                  separatorBuilder:
-                                      (BuildContext context, int index) =>
-                                          SizedBox(height: 2.h),
-                                ),
-                              );
-                            },
-                          )
-                        ],
-                      ),
-                    )),
-                    //SizedBox(height: 10,),
-                    Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              //borderRadius: BorderRadius.circular(30),
-                              gradient: LinearGradient(
-                            //begin: Alignment.center,
-                            // end: Alignment.center,
-                            stops: [0.0, 0.8],
-                            tileMode: TileMode.clamp,
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Color(0xFF901133),
-                              Color(0xFF5c0e35),
-                            ],
-                          )),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                  child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                  vertical: 0,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: _replyVisibility == true
-                                      ? const BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                          bottomLeft: Radius.circular(10),
-                                          bottomRight: Radius.circular(10),
-                                        )
-                                      : BorderRadius.circular(10.0),
-                                ),
-                                child: Column(
-                                  children: <Widget>[
-                                    Visibility(
-                                      visible: _replyVisibility,
-                                      child: Container(
-                                        margin: const EdgeInsets.only(
-                                            left: 8.0, right: 8.0, top: 8.0),
-                                        decoration: BoxDecoration(
-                                          color: ColorConstant.replaybluegray,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            IntrinsicHeight(
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      color: Colors.red,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        bottomLeft:
-                                                            Radius.circular(
-                                                                30.0),
-                                                        topLeft:
-                                                            Radius.circular(
-                                                                30.0),
-                                                      ),
-                                                    ),
-                                                    width: 5.0,
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                )),
+                                                  const SizedBox(
+                                                    width: 10,
                                                   ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              7.0),
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          // color: Colors.grey,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.0),
-                                                        ),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: <
-                                                                  Widget>[
-                                                                Text(
-                                                                  'Reply',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        13.sp,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .red,
-                                                                  ),
+                                                  if (chatModel.diraction ==
+                                                      'send')
+                                                    CircleAvatar(
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFF901133),
+                                                      child: Text(
+                                                          '${_loginData.name[0]}',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white)),
+                                                    ),
+                                                ],
+                                              )),
+                                        ),
+                                      );
+                                    }
+
+                                    //  else {
+                                    //   return null;
+                                    // }
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                itemCount: log.length,
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        SizedBox(height: 2.h),
+                              ),
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  )),
+                  //SizedBox(height: 10,),
+                  Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                            //borderRadius: BorderRadius.circular(30),
+                            gradient: LinearGradient(
+                          //begin: Alignment.center,
+                          // end: Alignment.center,
+                          stops: [0.0, 0.8],
+                          tileMode: TileMode.clamp,
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF901133),
+                            Color(0xFF5c0e35),
+                          ],
+                        )),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                                child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 0,
+                                vertical: 0,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: _replyVisibility == true
+                                    ? const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      )
+                                    : BorderRadius.circular(10.0),
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  Visibility(
+                                    visible: _replyVisibility,
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0, top: 8.0),
+                                      decoration: BoxDecoration(
+                                        color: ColorConstant.replaybluegray,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          IntrinsicHeight(
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: Colors.red,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(30.0),
+                                                      topLeft:
+                                                          Radius.circular(30.0),
+                                                    ),
+                                                  ),
+                                                  width: 5.0,
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            7.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        // color: Colors.grey,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                      ),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                'Reply',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      13.sp,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .red,
                                                                 ),
-                                                                IconButton(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  onPressed:
-                                                                      () {
-                                                                    setState(
-                                                                        () {
-                                                                      _replyVisibility =
-                                                                          false;
-                                                                      _replytex =
-                                                                          '';
-                                                                    });
-                                                                  },
-                                                                  icon:
-                                                                      const Icon(
-                                                                    Icons.close,
-                                                                    size: 20,
-                                                                  ),
+                                                              ),
+                                                              IconButton(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .zero,
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    _replyVisibility =
+                                                                        false;
+                                                                    _replytex =
+                                                                        '';
+                                                                  });
+                                                                },
+                                                                icon:
+                                                                    const Icon(
+                                                                  Icons.close,
+                                                                  size: 20,
                                                                 ),
-                                                              ],
-                                                            ),
-                                                            images(),
-                                                          ],
-                                                        ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          images(),
+                                                        ],
                                                       ),
                                                     ),
-                                                  )
-                                                ],
-                                              ),
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxHeight: 10.h,
-                                      ),
-                                      child: TextField(
-                                        controller: _peerMessage,
-                                        autofocus: false,
-                                        minLines: 1,
-                                        maxLines: 5,
-                                        keyboardType: TextInputType.multiline,
-                                        decoration: InputDecoration(
-                                          hintText: 'Type your message',
-                                          border: InputBorder.none,
-                                          hintStyle: TextStyle(
-                                              fontSize: 2.h,
-                                              color: Colors.black38),
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                          contentPadding: const EdgeInsets.only(
-                                              left: 10, bottom: 0),
-                                        ),
-                                        onChanged: (value) {
-                                          if (_isInputBoxEmpty ==
-                                              value.isEmpty) {
-                                            return;
-                                          }
-                                          setState(() {
-                                            _isInputBoxEmpty = value.isEmpty;
-                                          });
-                                          // if (_isInputBoxEmpty !=
-                                          //         value?.isEmpty ??
-                                          //     true) {
-                                          //   setState(() {
-                                          //     _isInputBoxEmpty = value.isEmpty;
-                                          //   });
-                                          // }
-                                          // if (value.isNotEmpty) {
-                                          //   setState(() {
-                                          //     _enteredText = _peerMessage.text;
-                                          //   });
-                                          // }
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              _isInputBoxEmpty && !_sendingMessage
-                                  ? SizedBox(
-                                      width: 8.h,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              addAttachment();
-                                              // debugPrint('mic button pressed');
-                                            },
-                                            child: Icon(
-                                              Icons.attachment,
-                                              size: 3.h,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              // debugPrint('add button pressed');
-                                              getImage(ImageSource.camera);
-                                            },
-                                            child: Icon(Icons.photo_camera,
-                                                size: 3.h, color: Colors.white),
                                           ),
                                         ],
                                       ),
-                                    )
-                                  : Container(),
-                              const SizedBox(width: 5),
-                              !_isInputBoxEmpty || _sendingMessage
-                                  ? Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        radius: 22,
-                                        child: IconButton(
-                                            icon: Icon(
-                                              _sendingMessage
-                                                  ? Icons.access_time
-                                                  : Icons.send,
-                                              color: const Color(0xFF5c0e35),
-                                              size: 25,
-                                            ),
-                                            onPressed: _sendingMessage
-                                                ? null
-                                                : () {
-                                                    if (_peerMessage.text
-                                                        .trim()
-                                                        .isEmpty) {
-                                                      //EasyLoading.showToast('Kya yrr kuch toh likho');
-                                                    } else {
-                                                      setState(() {
-                                                        _isInputBoxEmpty = true;
-                                                      });
-                                                      _sendPeerMessage();
-                                                    }
-                                                  }),
+                                    ),
+                                  ),
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight: 10.h,
+                                    ),
+                                    child: TextField(
+                                      controller: _peerMessage,
+                                      autofocus: false,
+                                      minLines: 1,
+                                      maxLines: 5,
+                                      keyboardType: TextInputType.multiline,
+                                      decoration: InputDecoration(
+                                        hintText: 'Type your message',
+                                        border: InputBorder.none,
+                                        hintStyle: TextStyle(
+                                            fontSize: 2.h,
+                                            color: Colors.black38),
+                                        focusedBorder: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        contentPadding: const EdgeInsets.only(
+                                            left: 10, bottom: 0),
                                       ),
-                                    )
-                                  // : _sendingMessage
-                                  //     ? const Center(
-                                  //         child: CircularProgressIndicator(),
-                                  //       )
-                                  : Container()
-                            ],
-                          ),
-                        )),
-                  ],
-                ),
-              )),
+                                      onChanged: (value) {
+                                        if (_isInputBoxEmpty == value.isEmpty) {
+                                          return;
+                                        }
+                                        setState(() {
+                                          _isInputBoxEmpty = value.isEmpty;
+                                        });
+                                        // if (_isInputBoxEmpty !=
+                                        //         value?.isEmpty ??
+                                        //     true) {
+                                        //   setState(() {
+                                        //     _isInputBoxEmpty = value.isEmpty;
+                                        //   });
+                                        // }
+                                        // if (value.isNotEmpty) {
+                                        //   setState(() {
+                                        //     _enteredText = _peerMessage.text;
+                                        //   });
+                                        // }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            _isInputBoxEmpty && !_sendingMessage
+                                ? SizedBox(
+                                    width: 8.h,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            addAttachment();
+                                            // debugPrint('mic button pressed');
+                                          },
+                                          child: Icon(
+                                            Icons.attachment,
+                                            size: 3.h,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            // debugPrint('add button pressed');
+                                            getImage(ImageSource.camera);
+                                          },
+                                          child: Icon(Icons.photo_camera,
+                                              size: 3.h, color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            const SizedBox(width: 5),
+                            !_isInputBoxEmpty || _sendingMessage
+                                ? Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: 22,
+                                      child: IconButton(
+                                          icon: Icon(
+                                            _sendingMessage
+                                                ? Icons.access_time
+                                                : Icons.send,
+                                            color: const Color(0xFF5c0e35),
+                                            size: 25,
+                                          ),
+                                          onPressed: _sendingMessage
+                                              ? null
+                                              : () {
+                                                  if (_peerMessage.text
+                                                      .trim()
+                                                      .isEmpty) {
+                                                    //EasyLoading.showToast('Kya yrr kuch toh likho');
+                                                  } else {
+                                                    setState(() {
+                                                      _isInputBoxEmpty = true;
+                                                    });
+                                                    _sendPeerMessage();
+                                                  }
+                                                }),
+                                    ),
+                                  )
+                                // : _sendingMessage
+                                //     ? const Center(
+                                //         child: CircularProgressIndicator(),
+                                //       )
+                                : Container()
+                          ],
+                        ),
+                      )),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
       onWillPop: () async {
@@ -1363,7 +1383,10 @@ class _Chat_ScreenState extends State<Chat_Screen> {
         return Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => const BottomNavbar(index: 2)),
+              builder: (context) => const BottomNavbar(
+                index: 2,
+              ),
+            ),
             (Route<dynamic> route) => false);
       },
     );
@@ -1815,8 +1838,7 @@ class _Chat_ScreenState extends State<Chat_Screen> {
       AgoraRtmMessage message =
           AgoraRtmMessage.fromText(jsonEncode(model.toJson()));
       // debugPrint('messagereplay' + _peerMessage.text);
-      await (await _createClient())
-          .sendMessageToPeer(widget.rtmpeerid, message, true, false);
+      await _client.sendMessageToPeer(widget.rtmpeerid, message, true, false);
 
       final id = await _insert(model);
       model.id = id.toString();
@@ -1971,7 +1993,7 @@ class _Chat_ScreenState extends State<Chat_Screen> {
                           // if (widget.client == null) {
                           //   await _createClient();
                           // }
-                          await (await _createClient()).sendMessageToPeer(
+                          await _client.sendMessageToPeer(
                             toPeerId,
                             message,
                             true,
@@ -2002,15 +2024,7 @@ class _Chat_ScreenState extends State<Chat_Screen> {
             });
   }
 
-  AgoraRtmClient _client;
   Future<AgoraRtmClient> _createClient() async {
-    if (_client != null) {
-      return _client;
-    }
-    if (widget.client != null) {
-      return widget.client;
-    }
-
     try {
       _client = await AgoraRtmClient.createInstance(
           'd6306b59624c4e458883be16f5e6cbd2');
@@ -2057,7 +2071,7 @@ class _Chat_ScreenState extends State<Chat_Screen> {
                           await _sendFCMPushChat(model);
                           AgoraRtmMessage message = AgoraRtmMessage.fromText(
                               jsonEncode(model.toJson()));
-                          await (await _createClient()).sendMessageToPeer(
+                          await _client.sendMessageToPeer(
                               widget.rtmpeerid, message, true, false);
 
                           model.url = video.path;
@@ -2666,8 +2680,7 @@ class _Chat_ScreenState extends State<Chat_Screen> {
     } else if (oldModel.type == 'video' || oldModel.type == 'doc') {
       AgoraRtmMessage message =
           AgoraRtmMessage.fromText(jsonEncode(model.toJson()));
-      (await _createClient())
-          .sendMessageToPeer(joiner.peerId, message, true, false);
+      _client.sendMessageToPeer(joiner.peerId, message, true, false);
       final id = await _insertForward(model, joiner.peerId);
       model.id = id.toString();
       chatLogController.addLog(model);
@@ -2676,8 +2689,7 @@ class _Chat_ScreenState extends State<Chat_Screen> {
       AgoraRtmMessage message =
           AgoraRtmMessage.fromText(jsonEncode(model.toJson()));
 
-      (await _createClient())
-          .sendMessageToPeer(joiner.peerId, message, true, false);
+      _client.sendMessageToPeer(joiner.peerId, message, true, false);
       final id = await _insertForward(model, joiner.peerId);
       model.id = id.toString();
       chatLogController.addLog(model);

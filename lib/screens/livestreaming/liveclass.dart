@@ -374,11 +374,11 @@ class _liveClassState extends State<LiveClass>
       builder: (BuildContext context) {
         return SingleChildScrollView(
           child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 30, left: 20, right: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.only(
+                  top: 10, bottom: 30, left: 20, right: 20),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
@@ -388,9 +388,7 @@ class _liveClassState extends State<LiveClass>
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  SizedBox(height: 2.h),
                   Text(
                     "${widget.classname}",
                     style: TextStyle(
@@ -399,9 +397,7 @@ class _liveClassState extends State<LiveClass>
                         fontWeight: FontWeight.w500,
                         color: Colors.white),
                   ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  SizedBox(height: 2.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -428,9 +424,7 @@ class _liveClassState extends State<LiveClass>
                           ))
                     ],
                   ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  SizedBox(height: 2.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -455,9 +449,7 @@ class _liveClassState extends State<LiveClass>
                           ))
                     ],
                   ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  SizedBox(height: 2.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -482,9 +474,7 @@ class _liveClassState extends State<LiveClass>
                           ))
                     ],
                   ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  SizedBox(height: 2.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -509,9 +499,7 @@ class _liveClassState extends State<LiveClass>
                           ))
                     ],
                   ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  SizedBox(height: 2.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -536,9 +524,7 @@ class _liveClassState extends State<LiveClass>
                           ))
                     ],
                   ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  SizedBox(height: 2.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -563,9 +549,7 @@ class _liveClassState extends State<LiveClass>
                           ))
                     ],
                   ),
-                  SizedBox(
-                    height: 4.h,
-                  ),
+                  SizedBox(height: 4.h),
                 ],
               )),
         );

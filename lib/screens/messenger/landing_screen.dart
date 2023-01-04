@@ -1,10 +1,12 @@
 import 'package:agora_rtm/agora_rtm.dart';
 import 'package:evidya/resources/app_colors.dart';
 import 'package:evidya/screens/messenger/group/group_chat_screen.dart';
+import 'package:evidya/screens/splash/splash_screen.dart';
 import 'package:evidya/widget/gradient_bg_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// import '../../constants/page_route_constants.dart';
 import '../../constants/string_constant.dart';
 import '../../localdb/databasehelper.dart';
 import '../../model/GroupListModal.dart';
@@ -37,7 +39,7 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
-    _openChatScreen(widget.peerId, widget.isGroup);
+    _checkLogin();
   }
 
   @override
@@ -50,13 +52,13 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     _hasBuildCalled = true;
-
+    if (_loading == 6) {
+      return SplashScreen();
+    }
     if (_loading == 5 || _loading == 1) {
-      return const Scaffold(
-        body: BottomNavbar(
-          index: 2,
-          // rtmpeerid: widget.peerId,
-        ),
+      return const BottomNavbar(
+        index: 2,
+        // rtmpeerid: widget.peerId,
       );
     }
 
@@ -199,6 +201,24 @@ class _LandingScreenState extends State<LandingScreen> {
     _loading = 1;
     if (_hasBuildCalled) {
       setState(() {});
+    }
+  }
+
+  _checkLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLogin = prefs.getBool('isLogin') ?? false;
+    debugPrint("IsLogin $isLogin");
+    if (isLogin) {
+      _openChatScreen(widget.peerId, widget.isGroup);
+      //   Navigator.of(context).pushNamedAndRemoveUntil(
+      //       PageRouteConstants.bottom_navigaction,
+      //       (Route<dynamic> route) => false);
+      // }
+    } else {
+      _loading = 6;
+      if (_hasBuildCalled) {
+        setState(() {});
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:agora_rtm/agora_rtm.dart';
 import 'package:evidya/constants/string_constant.dart';
 import 'package:evidya/model/login/PrefranceData.dart';
@@ -61,7 +62,7 @@ class _CallPageState extends State<CallPage> {
   AgoraRtmChannel _channel;
   // var mamberid = "";
   static final _users = <int>[];
-  Map<int, User> _userMap = new Map<int, User>();
+  final Map<int, User> _userMap = <int, User>{};
   int _localUid;
   final _infoStrings = <String>[];
   bool muted = false;
@@ -512,6 +513,11 @@ class _CallPageState extends State<CallPage> {
           GestureDetector(
               onTap: () {
                 try {
+                  if (!Platform.isAndroid) {
+                    EasyLoading.showToast(
+                        'Screen sharing only supporting in Android');
+                    return;
+                  }
                   platform.invokeMethod('startNewActivity', {
                     "rtcchannal": channelName,
                     "rtctoken": widget.token,
@@ -1395,11 +1401,11 @@ class _CallPageState extends State<CallPage> {
                   GestureDetector(
                     child: Container(
                       alignment: Alignment.topRight,
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           color: Colors.transparent,
                           borderRadius: BorderRadius.circular(10)),
-                      child: Icon(
+                      child: const Icon(
                         Icons.close_fullscreen_outlined,
                         color: Colors.white,
                       ),
@@ -1407,7 +1413,7 @@ class _CallPageState extends State<CallPage> {
                     onTap: () {
                       SystemChrome.setPreferredOrientations(
                           [DeviceOrientation.portraitUp]);
-                      PIPView.of(context).presentBelow(BottomNavbar(
+                      PIPView.of(context).presentBelow(const BottomNavbar(
                         index: 0,
                       ));
                     },
@@ -1418,7 +1424,7 @@ class _CallPageState extends State<CallPage> {
           ),
         ),
         bottomNavigationBar: Container(
-          padding: EdgeInsets.only(top: 0),
+          padding: const EdgeInsets.only(top: 0),
           height: 10.h,
           color: Colors.black,
           child: _toolbar(),
@@ -1432,7 +1438,7 @@ class _CallPageState extends State<CallPage> {
   /// Helper function to get list of native views
   List<Widget> _getRenderViews() {
     final List<StatefulWidget> list = [];
-    list.add(RtcLocalView.SurfaceView());
+    list.add(const RtcLocalView.SurfaceView());
     for (var uid in _users) {
       if (uid == 10000) {
         screenshareid = 1000;

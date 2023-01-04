@@ -44,7 +44,7 @@ class _RecentChatState extends State<RecentChat> {
   // final dbHelper = DatabaseHelper.instance;
 
   Timer timer;
-  var no = 1;
+  // var no = 1;
   bool _loaded = false;
   bool _control = false;
   String _fullName;
@@ -524,7 +524,7 @@ class _RecentChatState extends State<RecentChat> {
                 child: InkWell(
                   onLongPress: (() => deleteuser(user)),
                   onTap: () {
-                    no = 0;
+                    // no = 0;
                     final dbHelper = DatabaseHelper.instance;
                     dbHelper.deletebadge(user.peerId);
                     if (_control) {

@@ -149,7 +149,7 @@ class _LMSLiveClassState extends State<LMSLiveClass> {
                                     fit: BoxFit.cover,
                                     imageUrl: StringConstant.IMAGE_URL +
                                         liveClasses[position].image.toString(),
-                                    placeholder: (context, url) => SizedBox(
+                                    placeholder: (context, url) => const SizedBox(
                                       height: 20,
                                       width: 20,
                                       child: CircularProgressIndicator(

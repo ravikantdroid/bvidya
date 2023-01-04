@@ -92,7 +92,7 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Container(
+    return SizedBox(
         height: size.height,
         child: SafeArea(
           child: Scaffold(
@@ -112,7 +112,7 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                           //height: .h,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            image: DecorationImage(
+                            image: const DecorationImage(
                                 image: AssetImage(
                                   "assets/images/grey_background.jpg",
                                 ),
@@ -300,7 +300,7 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                                       placeholder: (context, url) =>
                                           Helper.onScreenProgress(),
                                       errorWidget: (context, url, error) =>
-                                          new Icon(Icons.error),
+                                          Icon(Icons.error),
                                     ),
                                   )
                                 : ClipRRect(
@@ -535,23 +535,22 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                                       builder: (BuildContext context) {
                                         return Dialog(
                                           backgroundColor: Colors.transparent,
-                                          child: new Container(
-                                            padding: EdgeInsets.symmetric(
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 25, vertical: 20),
                                             width: 260.0,
                                             height: 300.0,
-                                            decoration: new BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               shape: BoxShape.rectangle,
                                               color: Colors.transparent,
-                                              borderRadius: new BorderRadius
-                                                      .all(
-                                                  new Radius.circular(10.0)),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0)),
                                               image: DecorationImage(
                                                   fit: BoxFit.fill,
                                                   image: AssetImage(
                                                       "assets/images/whitebackground.png")),
                                             ),
-                                            child: new Column(
+                                            child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               mainAxisAlignment:
@@ -561,9 +560,7 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                                                   "assets/images/sad.png",
                                                   height: 10.h,
                                                 ),
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
+                                                const SizedBox(height: 15),
                                                 Text(
                                                   "Oops!",
                                                   style: TextStyle(
@@ -574,9 +571,7 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                                                           FontWeight.bold,
                                                       letterSpacing: .5),
                                                 ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
+                                                const SizedBox(height: 5),
                                                 Text(
                                                   "Oops! Broadcast is not started yet! \nPlease wait for moment.",
                                                   style: TextStyle(
@@ -584,9 +579,7 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                                                       letterSpacing: .5),
                                                   textAlign: TextAlign.center,
                                                 ),
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
+                                                const SizedBox(height: 15),
                                                 GestureDetector(
                                                     onTap: () {
                                                       //isShow = false;
@@ -597,7 +590,7 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                                                         decoration:
                                                             BoxDecoration(
                                                           gradient:
-                                                              LinearGradient(
+                                                              const LinearGradient(
                                                             begin: Alignment
                                                                 .topCenter,
                                                             end: Alignment
@@ -617,7 +610,8 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                                                         child: Center(
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsets.only(
+                                                                const EdgeInsets
+                                                                        .only(
                                                                     top: 10,
                                                                     bottom: 10),
                                                             child: Text(
@@ -665,23 +659,23 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
         });
   }
 
-  Future<void> onJoin(context, String token, String app_id, String channal,
-      String htoken) async {
-    await _handleCameraAndMic(Permission.camera);
-    await _handleCameraAndMic(Permission.microphone);
+  // Future<void> onJoin(context, String token, String app_id, String channal,
+  //     String htoken) async {
+  //   await _handleCameraAndMic(Permission.camera);
+  //   await _handleCameraAndMic(Permission.microphone);
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CallPage(
-              token: token, app_id: app_id, channelName: channal, id: htoken),
-        ));
-  }
+  //   Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => CallPage(
+  //             token: token, app_id: app_id, channelName: channal, id: htoken),
+  //       ));
+  // }
 
-  Future<void> _handleCameraAndMic(Permission permission) async {
-    final status = await permission.request();
-    // debugPrint(status);
-  }
+  // Future<void> _handleCameraAndMic(Permission permission) async {
+  //   final status = await permission.request();
+  //   // debugPrint(status);
+  // }
 
   upcommingclasses(Size size) {
     filterData.clear();
@@ -1118,10 +1112,10 @@ class _LiveStreamingScreenState extends State<LiveStreamingScreen> {
                 borderRadius: BorderRadius.circular(20.0)), //this right here
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-              decoration: new BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
                 color: Colors.transparent,
-                borderRadius: new BorderRadius.all(new Radius.circular(10.0)),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 image: DecorationImage(
                     fit: BoxFit.cover,
                     image: AssetImage("assets/images/whitebackground.png")),
